@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cloud-Soft Onesie | Lette Little</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "tertiary": "#576155",
+                  "on-secondary": "#ffffff",
+                  "primary-container": "#a89485",
+                  "secondary-container": "#f4dfcb",
+                  "secondary-fixed-dim": "#d7c3b0",
+                  "surface-variant": "#e5e2dc",
+                  "on-secondary-container": "#716252",
+                  "surface-container-highest": "#e5e2dc",
+                  "inverse-primary": "#d9c2b2",
+                  "secondary": "#6b5c4c",
+                  "on-surface": "#1c1c18",
+                  "background": "#fcf9f3",
+                  "surface-container-low": "#f6f3ed",
+                  "error-container": "#ffdad6",
+                  "primary-fixed": "#f6decd",
+                  "tertiary-fixed-dim": "#bfcaba",
+                  "on-primary-fixed": "#25190f",
+                  "surface-container": "#f0eee8",
+                  "tertiary-container": "#909b8d",
+                  "surface-dim": "#dcdad4",
+                  "outline": "#80756e",
+                  "on-tertiary-container": "#293328",
+                  "tertiary-fixed": "#dbe6d6",
+                  "on-tertiary-fixed": "#151e14",
+                  "on-background": "#1c1c18",
+                  "primary-fixed-dim": "#d9c2b2",
+                  "inverse-surface": "#31312d",
+                  "on-error-container": "#93000a",
+                  "on-tertiary-fixed-variant": "#3f493e",
+                  "on-secondary-fixed": "#241a0e",
+                  "on-tertiary": "#ffffff",
+                  "surface": "#fcf9f3",
+                  "primary": "#6c5b4e",
+                  "on-surface-variant": "#4e453f",
+                  "on-secondary-fixed-variant": "#524436",
+                  "on-primary-container": "#3b2d22",
+                  "error": "#ba1a1a",
+                  "surface-tint": "#6c5b4e",
+                  "on-primary-fixed-variant": "#534438",
+                  "on-primary": "#ffffff",
+                  "surface-container-high": "#ebe8e2",
+                  "secondary-fixed": "#f4dfcb",
+                  "surface-bright": "#fcf9f3",
+                  "inverse-on-surface": "#f3f0ea",
+                  "outline-variant": "#d1c4bc",
+                  "surface-container-lowest": "#ffffff",
+                  "on-error": "#ffffff"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "container-max": "1200px",
+                  "xxl": "64px",
+                  "xs": "4px",
+                  "unit": "4px",
+                  "margin-mobile": "16px",
+                  "gutter": "24px",
+                  "md": "16px",
+                  "lg": "24px",
+                  "sm": "8px",
+                  "xl": "40px"
+          },
+          "fontFamily": {
+                  "headline-lg": ["Plus Jakarta Sans"],
+                  "body-lg": ["Be Vietnam Pro"],
+                  "headline-xl": ["Plus Jakarta Sans"],
+                  "body-md": ["Be Vietnam Pro"],
+                  "label-md": ["Be Vietnam Pro"],
+                  "headline-md": ["Plus Jakarta Sans"],
+                  "label-sm": ["Be Vietnam Pro"],
+                  "headline-lg-mobile": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+                  "headline-lg": ["32px", {"lineHeight": "1.25", "fontWeight": "600"}],
+                  "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                  "headline-xl": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                  "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                  "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                  "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                  "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                  "headline-lg-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #fcf9f3;
+      color: #1c1c18;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .soft-shadow {
+      box-shadow: 0 4px 20px 0 rgba(168, 148, 133, 0.05);
+    }
+    .floating-card {
+      box-shadow: 0 4px 20px 0 rgba(168, 148, 133, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .floating-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px 0 rgba(168, 148, 133, 0.08);
+    }
+    .cloud-mask {
+      mask-image: url('https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/cloud/default/24px.svg');
+      mask-repeat: no-repeat;
+      mask-position: center;
+    }
+    /* Hide scrollbar for clean aesthetic */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #fcf9f3;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #d1c4bc;
+      border-radius: 10px;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md overflow-x-hidden pb-24 md:pb-0">
+<!-- Header (TopAppBar) -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-lg flex justify-between items-center px-margin-mobile md:px-xl py-sm w-full">
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-low transition-colors duration-300 p-2 rounded-full active:scale-95 transition-transform duration-200">cloud</button>
+</div>
+<div class="font-headline-md text-headline-md-mobile md:text-headline-md text-primary font-extrabold tracking-tight">Lette Little</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-low transition-colors duration-300 p-2 rounded-full active:scale-95 transition-transform duration-200">search</button>
+<button class="hidden md:flex material-symbols-outlined text-primary hover:bg-surface-container-low transition-colors duration-300 p-2 rounded-full active:scale-95 transition-transform duration-200">shopping_bag</button>
+</div>
+</header>
+<main class="mt-20 px-margin-mobile md:px-xxl max-w-container-max mx-auto pt-xl">
+<!-- Breadcrumb -->
+<nav class="mb-lg flex items-center gap-xs text-on-surface-variant font-label-md text-label-md">
+<span class="hover:text-primary cursor-pointer transition-colors">Shop</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="hover:text-primary cursor-pointer transition-colors">Apparel</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-primary font-bold">Cloud-Soft Onesie</span>
+</nav>
+<!-- Product Layout: Asymmetric Bento Style for Desktop -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-xl items-start">
+<!-- Image Gallery Section -->
+<div class="md:col-span-7 grid grid-cols-1 gap-lg">
+<div class="rounded-xl overflow-hidden bg-surface-container-low aspect-square relative group">
+<img alt="Cloud-Soft Onesie" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A premium, soft cream-colored organic cotton baby onesie laid flat on a textured, ivory knitted blanket. The scene is bathed in bright, soft natural morning light, creating a gentle and airy atmosphere. The material looks touchably soft with delicate visible fibers, embodying a minimalist and calm aesthetic. Soft earth tones and a sense of luxury baby care are evident." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuMle4IUYcKbrZyByWQIzhOuNyv7n1uX9XPAazUqdjnFLxV_gUE978QPQ62VP9z4Gt38-_7fyvCVc-QqNrzGPOZSgK6_Ed9hRmNKs71CeN4lkFSmWR4yD2M2OSpTgwOPUO_1GGm1rlQ3QvdqIYqeIM9Jf2JbdICQIa-3oJOqswIRUiuf1Rzll9wQ8XWSp9f9opY3hLLE6HqdZWawVjJGrvNQ1UemkdEQg-EJUa8sLJNL_LpH_z9RmxOBOh3k-IHZ9CRw8ZTG8GnLID"/>
+<button class="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full text-primary hover:text-error transition-colors shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">favorite</span>
+</button>
+</div>
+<div class="grid grid-cols-3 gap-md">
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container-low cursor-pointer border-2 border-primary">
+<img alt="Detail 1" class="w-full h-full object-cover" data-alt="A close-up macro shot of the organic cotton fabric of a baby onesie, showing the fine texture and the gentle cream color. The lighting is diffused and warm, highlighting the high-quality craftsmanship and softness of the material. Subtle shadows define the folds of the fabric in a minimalist studio setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-fgo5upX7HYL3V9mtI0Y0dJxgo7DB0rJWZAldUiMbUVlDX06Hg9CqvdUA0VYZoZlE0rGfy_z03ttLGRz37uSVFo9j0yWQLe-P-ISI9jB6k3QZjNucvA2P2Yh90sIqTDW-H1EXsOyVuRlrQ9rjOHP78emTF11s_e8-bPeGb4NOkS95xrftt7p1plI8uYNNHBTUo6v3Li_rMjj8RnFPPkXU9Qxo7ZcmjbJ8Q2MxYKco3W32C5jL_MDOZPgP-PwLGTJ3yTlSUtdEWEnN"/>
+</div>
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container-low cursor-pointer border-2 border-transparent hover:border-outline-variant transition-all">
+<img alt="Detail 2" class="w-full h-full object-cover" data-alt="A lifestyle product shot of a baby onesie draped over a smooth, light-colored wooden hanger. The background is a soft beige lime-wash wall, creating a serene and modern nursery look. The light is soft and even, emphasizing the clean lines and gentle aesthetic of the garment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_YFCPbr-TtIGh1lM3Q31Od3wGstwNO7NEaZB8WJ3tqzbdW2PbNzQT8m-v9kXw2j1sDr31JjyfTfhBomrcp8eeHZiDLdZ9y3FzMriH_WcXI-lD0kDdYQBwTAS2oTovj049iyIU4-hCz7pTbH-vFpH1pZd9HLkv9nJxMKnZKoX4oj9_LEn0_uWOoLLG25O0bLyv4jqy7_K5hzntlnkOvH9MRbDsh7cZvtnb6c65xKWCGJnZTYedMbWA4u6x0jchDOUMInkrgOSIja0k"/>
+</div>
+<div class="aspect-square rounded-xl overflow-hidden bg-surface-container-low cursor-pointer border-2 border-transparent hover:border-outline-variant transition-all">
+<img alt="Detail 3" class="w-full h-full object-cover" data-alt="A detailed shot showing the easy-snap bottom buttons and the high-quality stitching on a cream organic cotton onesie. The garment is placed on a light peach-colored surface, maintaining a soft, cohesive brand palette. The lighting is bright and ethereal, suggesting purity and comfort." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAra_nawEHP2f8D5gtrt09AdKzp9DdSj264xiTbmef0bt2U9_9rptfwhjN0dEWa--ixJqfU44vP8B01Kp7pWsozZyBJN2PmZoAmHvPamxBiXok0mIleK82qCMbyZfrk33PDT7V9M2YSbhjgYWVjd-hxlRTG1kBlRXLay5N7pJp9eVG4ifT_cHofQvaJeFFJq_uHd4C-OVVO5dOIZ-Y-JBvD2FExjjDgznQ4xSER4jGgxmsyY-AR-SmiENx5q1pklp9VVR9vlbYstWpd"/>
+</div>
+</div>
+</div>
+<!-- Product Details Section -->
+<div class="md:col-span-5 sticky top-24 space-y-xl">
+<div class="space-y-sm">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full text-label-sm font-label-sm uppercase tracking-wider">Organic Cotton</span>
+<h1 class="font-headline-xl text-headline-lg md:text-headline-xl text-primary leading-tight">Cloud-Soft Onesie</h1>
+<div class="flex items-center gap-md py-xs">
+<span class="text-headline-md font-headline-md text-primary">$24.00</span>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-xs">
+<div class="flex text-primary-container">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 0;">star</span>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant">(124 Reviews)</span>
+</div>
+</div>
+</div>
+<p class="text-body-lg font-body-lg text-on-surface-variant leading-relaxed">
+          Crafted from the finest organic cotton, our Cloud-Soft Onesie offers unparalleled comfort and gentleness for your baby's delicate skin. Featuring a classic envelope neck and easy-snap bottom for quick changes.
+        </p>
+<!-- Selections -->
+<div class="space-y-lg">
+<!-- Colors -->
+<div class="space-y-md">
+<label class="font-label-md text-label-md text-primary font-bold">COLOR: <span class="text-on-surface-variant font-normal">Soft Cream</span></label>
+<div class="flex gap-md">
+<button class="w-10 h-10 rounded-full border-2 border-primary bg-[#FDFBF7] ring-offset-2 ring-1 ring-transparent transition-all"></button>
+<button class="w-10 h-10 rounded-full border border-outline-variant bg-[#F5E6DA] hover:scale-105 transition-all"></button>
+<button class="w-10 h-10 rounded-full border border-outline-variant bg-[#DCDAD4] hover:scale-105 transition-all"></button>
+</div>
+</div>
+<!-- Sizes -->
+<div class="space-y-md">
+<div class="flex justify-between">
+<label class="font-label-md text-label-md text-primary font-bold">SIZE</label>
+<button class="text-label-sm font-label-sm text-primary underline">Size Guide</button>
+</div>
+<div class="grid grid-cols-4 gap-sm">
+<button class="py-3 rounded-xl border border-outline-variant font-label-md text-label-md hover:bg-surface-container transition-colors">0-3M</button>
+<button class="py-3 rounded-xl border-2 border-primary bg-primary-container/10 font-label-md text-label-md">3-6M</button>
+<button class="py-3 rounded-xl border border-outline-variant font-label-md text-label-md hover:bg-surface-container transition-colors">6-9M</button>
+<button class="py-3 rounded-xl border border-outline-variant font-label-md text-label-md hover:bg-surface-container transition-colors">9-12M</button>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-md pt-md">
+<button class="w-full bg-primary-container text-white py-xl rounded-full font-label-md text-label-md hover:bg-primary transition-all active:scale-[0.98] shadow-lg shadow-primary-container/20">
+            Add to Cart
+          </button>
+<button class="w-full border-2 border-primary text-primary py-xl rounded-full font-label-md text-label-md hover:bg-primary/5 transition-all active:scale-[0.98]">
+            Buy Now
+          </button>
+</div>
+<!-- Shipping & Info -->
+<div class="pt-xl space-y-md border-t border-outline-variant">
+<details class="group cursor-pointer">
+<summary class="flex justify-between items-center py-sm list-none">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">local_shipping</span>
+<span class="font-label-md text-label-md text-primary font-bold uppercase">Shipping &amp; Returns</span>
+</div>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="pt-sm pb-md text-on-surface-variant font-body-md text-body-md space-y-sm">
+<p>Free standard shipping on orders over $50. Deliveries typically arrive in 3-5 business days.</p>
+<p>We accept returns of unwashed, unworn items with original tags within 30 days of delivery.</p>
+</div>
+</details>
+<details class="group cursor-pointer">
+<summary class="flex justify-between items-center py-sm list-none">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">eco</span>
+<span class="font-label-md text-label-md text-primary font-bold uppercase">Sustainability</span>
+</div>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="pt-sm pb-md text-on-surface-variant font-body-md text-body-md">
+<p>GOTS certified organic cotton, harvested without harmful chemicals. Our packaging is 100% recyclable and plastic-free.</p>
+</div>
+</details>
+</div>
+</div>
+</div>
+<!-- Complete the Look Section -->
+<section class="mt-[120px] mb-xxl">
+<div class="flex flex-col md:flex-row justify-between items-end mb-xl gap-md">
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest block mb-2">Curated for you</span>
+<h2 class="font-headline-lg text-headline-lg text-primary">Complete the Look</h2>
+</div>
+<button class="group flex items-center gap-xs font-label-md text-label-md text-primary">
+          View All Collection 
+          <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-lg">
+<!-- Related 1 -->
+<div class="floating-card rounded-xl bg-surface-container-lowest p-md group">
+<div class="aspect-[4/5] rounded-lg overflow-hidden mb-md bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A pair of miniature baby booties made from soft knitted wool in a warm beige color. They are photographed on a neutral, minimalist background with soft shadows. The lighting is calm and elegant, highlighting the tiny details and delicate texture of the knit." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmEzWlfpJfoBJPn9x7WNFa2Tz3EaFbwTuTim0dZ9WL_DTSHUjipf7OwtwigWXp1zthEqoX1JcYF5dghmrK8nqBK1geEgrr4WCNee83DFjoM3U5qaYyVaqmRAcroE5hO7s4a1nkH_h8VfxKFcOjGjXsR2iq0ckyA15h5NUqHtHXgFkm7-4i_VxBd6fpF6anMMYAmZbd0AKIQPupr4QmRWUy6UQj1NtQKhKqpApqLWlLbvtX-WHLG1WBq6J69soZdz4WEJojVOrL7RjF"/>
+</div>
+<h3 class="font-label-md text-label-md text-primary font-bold mb-1">Knitted Booties</h3>
+<p class="text-on-surface-variant text-label-sm font-label-sm">$18.00</p>
+</div>
+<!-- Related 2 -->
+<div class="floating-card rounded-xl bg-surface-container-lowest p-md group">
+<div class="aspect-[4/5] rounded-lg overflow-hidden mb-md bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A lightweight organic cotton baby bonnet in a soft sage green color, laying on a flat white surface. The image is minimalist and clean, with soft natural light coming from the side. The overall aesthetic is gentle, airy, and focused on high-quality natural baby essentials." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeHgs9jkqLOQ0B9MyTYNGkYVKfDaGTkX1p-BXVpJDygsELYwM2E0ViccYR8Fqn-aSohcVJPMsmrmBInAEI2IMPJn1OjqWdhAjnPqfwMZnopUcnXnsDkDKd24ymfwaFq0jAkyHpnjJnwba-Y_191XTF99nWSsrS-9AjOIbuSD-8lCT4kG7wEtYAPw5FI3cg_ei2GnN6huQEwPK3lZGKIM-_uMKZ5ywxBvAP7k8unRYSLl77MiYR1_H_bfRbidwM8WdLgXeivRXytBXH"/>
+</div>
+<h3 class="font-label-md text-label-md text-primary font-bold mb-1">Organic Cotton Bonnet</h3>
+<p class="text-on-surface-variant text-label-sm font-label-sm">$14.00</p>
+</div>
+<!-- Related 3 -->
+<div class="floating-card rounded-xl bg-surface-container-lowest p-md group">
+<div class="aspect-[4/5] rounded-lg overflow-hidden mb-md bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A soft muslin swaddle blanket with a delicate, minimalist cloud pattern in earthy tones. The fabric is softly draped on a light wood surface. High-key lighting emphasizes the breathable, airy texture of the muslin cloth, matching a gentle nursery theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBPA5bH6aauFSiXtEvRS38q1WOo-4tXBNlly6SeBv5JVEzx0IpIqLzbrHBJZ-nCXa4_UsTLN-qncVNT0NxBzqNDSbFn9Fj53o4y2Li7JmekJEsgdSiZn8ybTuuy2vzW3wmOLhNCnh0FI03j8JeoYSz2y0Shds5b2ETdhA5G2QYNrvQKRbJYTR3pXt8LHao3oiLUb10m60DnzNGQG21xJbbbefYFwuHJKY6kdPS18A6gE26xEsg1G0ikz9np5JdYl7_cxU5jlh8OUxw"/>
+</div>
+<h3 class="font-label-md text-label-md text-primary font-bold mb-1">Cloud Print Swaddle</h3>
+<p class="text-on-surface-variant text-label-sm font-label-sm">$28.00</p>
+</div>
+<!-- Related 4 -->
+<div class="floating-card rounded-xl bg-surface-container-lowest p-md group">
+<div class="aspect-[4/5] rounded-lg overflow-hidden mb-md bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A set of smooth, round wooden baby teething rings tied with a piece of natural linen. The image is set against a clean, off-white background with a soft ambient glow. The visual style is organic, safe, and beautifully minimalist, conveying a sense of quiet joy and nature." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHfnm8At5dW0pP1PXOEcCi3aSloBir0rsu1yQezWTwrXKx09RKNcXFFglkOVVBkPKANUJLUOC4dyDKjvSr9j-qW28Jwzzgb8_85lJqWGay7m6xFG87jrXWHowD39pLDMaT-rYng3qu__WoSH0tgdepo4za73mGhYGamVpHQLRrP7tvALSJBsYOZpAJoCpH5u0Efp2b1P5K3gB6KUBzgAc37euDZ--KO-ktSKC41HBh2VO6wyXnY8KyLbKxbMqAjJXwOXrehwGjD7E2"/>
+</div>
+<h3 class="font-label-md text-label-md text-primary font-bold mb-1">Linen Teether Toy</h3>
+<p class="text-on-surface-variant text-label-sm font-label-sm">$12.00</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-surface-container-lowest dark:bg-surface-dim border-t border-outline-variant dark:border-outline flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-xxl py-xl w-full gap-lg">
+<div class="text-center md:text-left">
+<div class="font-headline-md text-headline-md text-primary mb-2">Lette Little</div>
+<p class="text-on-surface-variant font-body-md text-body-md">© 2024 Lette Little. Made Light. Made Gentle.</p>
+</div>
+<div class="flex gap-lg flex-wrap justify-center">
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300" href="#">Contact Us</a>
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300" href="#">Shipping</a>
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors duration-300" href="#">Returns</a>
+</div>
+</footer>
+<!-- Bottom Nav Bar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface-container-low dark:bg-surface-container-highest shadow-lg rounded-t-xl">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-4 py-1 active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-sm text-label-sm">Shop</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-sm text-label-sm">Favorites</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant active:scale-90 transition-transform duration-200">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Account</span>
+</div>
+</nav>
+<script>
+    // Micro-interactions for buttons and hover states
+    document.querySelectorAll('button, a').forEach(el => {
+      el.addEventListener('mousedown', () => {
+        el.classList.add('scale-95');
+      });
+      el.addEventListener('mouseup', () => {
+        el.classList.remove('scale-95');
+      });
+      el.addEventListener('mouseleave', () => {
+        el.classList.remove('scale-95');
+      });
+    });
+
+    // Reveal animation on scroll
+    const observerOptions = {
+      threshold: 0.1
+    };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('opacity-100', 'translate-y-0');
+          entry.target.classList.remove('opacity-0', 'translate-y-8');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.floating-card').forEach(card => {
+      card.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-700', 'ease-out');
+      observer.observe(card);
+    });
+  </script>
+</body></html>

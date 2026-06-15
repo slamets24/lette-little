@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lette Little - Made Light. Made Gentle.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#524436",
+                    "primary-container": "#a89485",
+                    "outline": "#80756e",
+                    "tertiary-fixed-dim": "#bfcaba",
+                    "surface-tint": "#6c5b4e",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#716252",
+                    "on-tertiary-fixed": "#151e14",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#e5e2dc",
+                    "secondary-fixed": "#f4dfcb",
+                    "on-primary": "#ffffff",
+                    "secondary": "#6b5c4c",
+                    "surface-variant": "#e5e2dc",
+                    "on-secondary-fixed": "#241a0e",
+                    "on-tertiary-container": "#293328",
+                    "background": "#fcf9f3",
+                    "error": "#ba1a1a",
+                    "surface-container": "#f0eee8",
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#f4dfcb",
+                    "inverse-on-surface": "#f3f0ea",
+                    "on-primary-container": "#3b2d22",
+                    "surface-dim": "#dcdad4",
+                    "on-surface": "#1c1c18",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#ebe8e2",
+                    "on-surface-variant": "#4e453f",
+                    "primary-fixed": "#f6decd",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#1c1c18",
+                    "outline-variant": "#d1c4bc",
+                    "surface-bright": "#fcf9f3",
+                    "tertiary-container": "#909b8d",
+                    "surface": "#fcf9f3",
+                    "secondary-fixed-dim": "#d7c3b0",
+                    "tertiary-fixed": "#dbe6d6",
+                    "tertiary": "#576155",
+                    "inverse-surface": "#31312d",
+                    "on-tertiary-fixed-variant": "#3f493e",
+                    "on-primary-fixed-variant": "#534438",
+                    "on-primary-fixed": "#25190f",
+                    "surface-container-low": "#f6f3ed",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#d9c2b2",
+                    "inverse-primary": "#d9c2b2",
+                    "primary": "#6c5b4e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "sm": "8px",
+                    "xxl": "64px",
+                    "margin-mobile": "16px",
+                    "container-max": "1200px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "lg": "24px",
+                    "xl": "40px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Be Vietnam Pro"],
+                    "headline-xl": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "label-md": ["Be Vietnam Pro"],
+                    "label-sm": ["Be Vietnam Pro"],
+                    "body-md": ["Be Vietnam Pro"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.25", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-lg flex justify-between items-center px-margin-mobile md:px-xl py-sm w-full">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary" data-icon="cloud">cloud</span>
+</div>
+<h1 class="font-headline-md text-headline-md text-primary font-extrabold tracking-tight">Lette Little</h1>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-low transition-colors duration-300 p-2 rounded-full active:scale-95" data-icon="search">search</button>
+</div>
+</nav>
+<main class="pt-xxl pb-xxl">
+<!-- Hero Section -->
+<section class="relative h-[480px] md:h-[600px] w-full overflow-hidden mb-xxl">
+<div class="absolute inset-0 bg-primary/10">
+<img class="w-full h-full object-cover object-center" data-alt="A serene high-key photograph of a peaceful baby sleeping in a soft, cream-colored organic cotton onesie. The lighting is diffused and gentle, creating a warm and airy atmosphere with soft shadows. The color palette consists of muted earth tones, soft beiges, and gentle taupes, perfectly embodying a minimalist and tactile aesthetic for premium nursery products." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBozw4nzZBNtKFF3mHYx2mr2Hki0ray98K1YqcLsU4up6rP2rEEcG8ksyh5Il-rHPhhh2QWahTfhDHxfFYOltQpO918oUJ7CGNHiqBxaXyjYOrHKDwQ81QVdCxSMPIQ7lEMvzOAz_BcO2rQaTy0WnD9BILjkYmTaHEo59OcFYNtKFoP6xP9QTiTW4TnUf34e9L93jnVuogv3-bBGAmwSRRAZ6vhFyl14JAmdaAFvpbW2m3ERrA2hgqcUWrvbVsE59AshTx2GevhyxXk"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-r from-background/40 to-transparent flex items-center px-margin-mobile md:px-xxl">
+<div class="max-w-xl animate-fade-in">
+<h2 class="font-headline-xl text-headline-lg-mobile md:text-headline-xl text-on-background mb-md leading-tight">Made Light.<br/>Made Gentle.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-md">Curated essentials for your little ones, crafted with the softest materials for ultimate comfort.</p>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-xl py-md rounded-full shadow-[0_4px_20px_0_rgba(168,148,133,0.15)] hover:bg-primary/90 transition-all active:scale-95 duration-200">
+                        Explore Collection
+                    </button>
+</div>
+</div>
+</section>
+<!-- Categories -->
+<section class="px-margin-mobile md:px-xxl mb-xxl">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-headline-md text-headline-md text-on-background">Categories</h3>
+<button class="text-primary font-label-md text-label-md hover:underline">View All</button>
+</div>
+<div class="flex gap-lg overflow-x-auto hide-scrollbar pb-sm">
+<!-- Onesies -->
+<div class="flex flex-col items-center gap-sm flex-shrink-0 cursor-pointer group">
+<div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-secondary-container flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-on-secondary-container !text-4xl" data-icon="child_care">child_care</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Onesies</span>
+</div>
+<!-- Swaddles -->
+<div class="flex flex-col items-center gap-sm flex-shrink-0 cursor-pointer group">
+<div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-tertiary-fixed flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant !text-4xl" data-icon="blanket">blanket</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Swaddles</span>
+</div>
+<!-- Accessories -->
+<div class="flex flex-col items-center gap-sm flex-shrink-0 cursor-pointer group">
+<div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-primary-fixed flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-on-primary-fixed-variant !text-4xl" data-icon="checkroom">checkroom</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Accessories</span>
+</div>
+<!-- Soft Toys -->
+<div class="flex flex-col items-center gap-sm flex-shrink-0 cursor-pointer group">
+<div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-secondary-fixed flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-on-secondary-fixed !text-4xl" data-icon="toys">toys</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Soft Toys</span>
+</div>
+<!-- Nursery -->
+<div class="flex flex-col items-center gap-sm flex-shrink-0 cursor-pointer group">
+<div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-surface-container-high flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+<span class="material-symbols-outlined text-on-surface-variant !text-4xl" data-icon="bed">bed</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Nursery</span>
+</div>
+</div>
+</section>
+<!-- Featured Products -->
+<section class="px-margin-mobile md:px-xxl mb-xxl">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-headline-md text-headline-md text-on-background">Featured Favorites</h3>
+<div class="flex gap-sm">
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-lg">
+<!-- Product 1 -->
+<div class="group">
+<div class="relative aspect-square rounded-xl bg-surface-container mb-md overflow-hidden shadow-[0_4px_20px_0_rgba(168,148,133,0.05)]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A soft and airy product shot of a high-quality cream-colored onesie laid flat on a textured linen background. The fabric has a visible soft knit quality. The image is bright with a clean minimalist aesthetic, lit by soft morning sunlight that creates gentle, diffused shadows, emphasizing the 'Made Light' brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0gn0Xrllkq8qzm6nd8qy8S6E-kcRv97sYsH-ohUINg_fq0o_2xWF5krbYUNK5g7evKdY0adcT4PqfQALo4hFpgnDY8Lq0Mz18UxjX55HYEEYZCBUNHkb7YD1j-Lsg8fOC52mFt5UNxC2iIetN2mYt6FQWdqOXDHqxeRA7YHkm0hWyp_pLGCT9TK0u9KvPIDGH_iE4awyCvAnQvsDHkCpKd6aa0RK73ArIyp27mHEqZL6TumopHL2ZOSTcxGc_zXyxohp8ZwrbKTqz"/>
+<button class="absolute top-sm right-sm w-10 h-10 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-primary hover:text-error transition-colors duration-300 shadow-sm active:scale-90">
+<span class="material-symbols-outlined text-[20px]" data-icon="favorite">favorite</span>
+</button>
+<div class="absolute bottom-sm right-sm translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+<button class="bg-primary text-on-primary p-2 rounded-full shadow-lg active:scale-90">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-tertiary mb-xs uppercase tracking-wider">Organic Cotton</p>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold mb-xs">Cloud-Soft Onesie</h4>
+<span class="font-label-md text-label-md text-on-surface-variant">$24.00</span>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="group">
+<div class="relative aspect-square rounded-xl bg-surface-container mb-md overflow-hidden shadow-[0_4px_20px_0_rgba(168,148,133,0.05)]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A beautiful, soft muslin swaddle with a subtle sage green leaf print, draped elegantly over a wooden crib. The lighting is ethereal and warm, suggesting a quiet nursery environment. The overall mood is peaceful and tactile, focusing on the high-quality textile and delicate pattern suited for a gentle baby aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7pVcKoxiXV0Wl39qxxpt-NVNE5g7wUH_MgKojGcNETEd7FaRIcPo6l4BMNcsx8IIEFvcYQeNJBKF2ypwkqpCq8q3PLpN30d2F8JGrZAFIiOMg9iaqMjH76dndAiQmsPdFjs7cwvPncdKoGaz_pDCHmcQgnoMO0tFrFtdFRt6-vp7Ciu5xLDH3pORgeFfE3LeQiGHa2Q72tbaCEHIbB7J-xVtmrnysK_XDrQUtuYtTatWkrs3BHAjsho_7AForhiwjhUUDEC44ox7S"/>
+<button class="absolute top-sm right-sm w-10 h-10 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-primary hover:text-error transition-colors duration-300 shadow-sm active:scale-90">
+<span class="material-symbols-outlined text-[20px]" data-icon="favorite">favorite</span>
+</button>
+<div class="absolute bottom-sm right-sm translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+<button class="bg-primary text-on-primary p-2 rounded-full shadow-lg active:scale-90">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-tertiary mb-xs uppercase tracking-wider">Muslin Fabric</p>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold mb-xs">Gentle Touch Swaddle</h4>
+<span class="font-label-md text-label-md text-on-surface-variant">$18.00</span>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="group">
+<div class="relative aspect-square rounded-xl bg-surface-container mb-md overflow-hidden shadow-[0_4px_20px_0_rgba(168,148,133,0.05)]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A charming set of three pairs of tiny baby socks in soft pastel shades of sand, dusty rose, and sage. They are arranged neatly on a clean white surface. The photography style is high-end and minimalist, with a focus on the delicate texture and the soft, rounded edges of the small garments." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6gup6wgnI2am5iIM6hIcGnABmGt_G2K9hj6__xrbvPtdaZ0l1A8jbiahTAwxi0XahuEx02rOOHLXsQeZa5p3Z2qkBsrSSPEQWb78prr2WINjkUOlECWl1wPTtJk7TrIqfT7mCsVd-hkKZRYXc5dt5sXjp43qc-QRBjASU5taTx07noSYaHx56SB3TzYaM5r2oFPGVSLxA28Xe0cmx5v_bW_PKohYTUCDKk4uyXLDoxiOWRsUnw8ezPKmoGAok1A0UBjbpeI5Vp2Np"/>
+<button class="absolute top-sm right-sm w-10 h-10 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-primary hover:text-error transition-colors duration-300 shadow-sm active:scale-90">
+<span class="material-symbols-outlined text-[20px]" data-icon="favorite">favorite</span>
+</button>
+<div class="absolute bottom-sm right-sm translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+<button class="bg-primary text-on-primary p-2 rounded-full shadow-lg active:scale-90">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-tertiary mb-xs uppercase tracking-wider">Multipack</p>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold mb-xs">Tiny Comfort Socks</h4>
+<span class="font-label-md text-label-md text-on-surface-variant">$12.00</span>
+</div>
+</div>
+<!-- Product 4 -->
+<div class="group">
+<div class="relative aspect-square rounded-xl bg-surface-container mb-md overflow-hidden shadow-[0_4px_20px_0_rgba(168,148,133,0.05)]">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A plush, cloud-shaped decorative pillow for a baby nursery, made from a soft, fleece-like material in a light taupe color. The pillow sits on a cozy knitted blanket. The image is warmly lit and invokes a sense of safety, dreaminess, and comfort, consistent with the Lette Little brand personality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Y04jAnYtHiIEdCR0DNnhngwCKMbyL2qkqucjKzsCXeALiPQkNG38zqZpoobAnS58SDDOZN6PT7QBJgVVpgY6yQ7PT2TT7kCfQ0oqrO_lyh8dUK5gVjs9ktvPg3lmQ7yL0zsqsyyHSfWCBqMlupEHpS_I561RaBvPSO7SymzCzUv98kdWdcjmkZXWYAnC5SM7UXfai_lmUHn7apx0mK6Sc7hS9pJMsQalhuAFWaQ3-gBnYpM0qrZgRAou1gXWWSDcWTRfiOrmSomb"/>
+<button class="absolute top-sm right-sm w-10 h-10 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-primary hover:text-error transition-colors duration-300 shadow-sm active:scale-90">
+<span class="material-symbols-outlined text-[20px]" data-icon="favorite">favorite</span>
+</button>
+<div class="absolute bottom-sm right-sm translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+<button class="bg-primary text-on-primary p-2 rounded-full shadow-lg active:scale-90">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-tertiary mb-xs uppercase tracking-wider">Nursery Decor</p>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold mb-xs">Dreamy Cloud Pillow</h4>
+<span class="font-label-md text-label-md text-on-surface-variant">$22.00</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter / Community Section (Asymmetric Pattern) -->
+<section class="px-margin-mobile md:px-xxl mb-xxl">
+<div class="grid grid-cols-1 md:grid-cols-12 bg-primary-container/20 rounded-3xl overflow-hidden min-h-[300px]">
+<div class="md:col-span-7 p-xl md:p-xxl flex flex-col justify-center">
+<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-primary-container mb-md">Join the Little Club</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-xl">Receive gentle updates, parenting tips, and early access to our new collections.</p>
+<div class="flex flex-col sm:flex-row gap-md">
+<input class="flex-grow bg-white border-outline-variant focus:ring-primary focus:border-primary rounded-xl px-md py-md outline-none transition-all duration-300 border" placeholder="Your email address" type="email"/>
+<button class="bg-primary text-on-primary px-xl py-md rounded-xl font-label-md text-label-md hover:shadow-lg active:scale-95 transition-all">Subscribe</button>
+</div>
+</div>
+<div class="md:col-span-5 h-[200px] md:h-auto">
+<img class="w-full h-full object-cover" data-alt="A lifestyle shot of a young parent holding a baby close, wrapped in a soft cotton swaddle. The lighting is back-lit, creating a soft glowing halo effect. The color palette is composed of soft creams and warm browns. The focus is on the emotional connection and the tactile comfort of the fabric." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB622S9CkksD0CFLlhCxPYbJmbnrsfKpBPzWE5Flco0S_0LviTeujdIQ4UhPQQIROrNtX60nswrrZaRIJCJoRff15PZe-9q1gebd5F_fEXAEpNQVM9RIVPlTW_rxndrGy1CCrlqGNEuJcZSm1U7RkglXLlcTn8V_N99H6IuRHSX57UAP3QLF9fq1IBR2cl43DrIQ_NeHh3mQUohUO755Oey2QkoDhi4NL-5OpLi71spQYULdGHb_wlWegfJ2xGJxF8RuDO-0FntQUE9"/>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest w-full border-t border-outline-variant flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-xxl py-xl w-full gap-lg mb-20 md:mb-0">
+<div class="flex flex-col items-center md:items-start gap-sm">
+<h2 class="font-headline-md text-headline-md text-primary">Lette Little</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 Lette Little. Made Light. Made Gentle.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-xl">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Us</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Shipping</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Returns</a>
+</div>
+</footer>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-surface-container-low rounded-t-xl shadow-lg md:hidden">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-label-sm mt-0.5">Home</span>
+</a>
+<!-- Shop -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="font-label-sm text-label-sm mt-0.5">Shop</span>
+</a>
+<!-- Favorites -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="font-label-sm text-label-sm mt-0.5">Favorites</span>
+</a>
+<!-- Account -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm mt-0.5">Account</span>
+</a>
+</nav>
+<!-- Simple Hover & Interaction Script -->
+<script>
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if(el.getAttribute('href') === '#') e.preventDefault();
+            });
+        });
+
+        // Simple smooth scroll for category items
+        const catScroll = document.querySelector('.hide-scrollbar');
+        if (catScroll) {
+            catScroll.addEventListener('wheel', (evt) => {
+                evt.preventDefault();
+                catScroll.scrollLeft += evt.deltaY;
+            });
+        }
+    </script>
+</body></html>
