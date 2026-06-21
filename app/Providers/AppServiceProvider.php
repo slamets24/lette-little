@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
         Date::use(CarbonImmutable::class);
 
         Storage::extend('google', function ($app, array $config): FilesystemAdapter {
-            $client = new Client();
+            $client = new Client;
             $client->setClientId($config['clientId']);
             $client->setClientSecret($config['clientSecret']);
             $client->refreshToken($config['refreshToken']);

@@ -43,3 +43,11 @@ yarn-error.log
 /docs/agents/*.md
 /docs/llm/*.md
 /docs/notes/*.md
+/docs/agents-personal-ecommerce.md
+/docs
+.claude
+.mcp.json
+.agents
+.codex
+.cursor
+.kiro

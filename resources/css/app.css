@@ -215,7 +215,9 @@
         height: 2.5rem;
         border-radius: 9999px;
         color: #6c5b4e;
-        transition: background 180ms ease, transform 180ms ease;
+        transition:
+            background 180ms ease,
+            transform 180ms ease;
     }
 
     .icon-button:hover,
@@ -266,7 +268,12 @@
         position: absolute;
         inset: 0;
         content: '';
-        background: linear-gradient(90deg, rgb(252 249 243 / 0.78), rgb(252 249 243 / 0.2), transparent);
+        background: linear-gradient(
+            90deg,
+            rgb(252 249 243 / 0.78),
+            rgb(252 249 243 / 0.2),
+            transparent
+        );
     }
 
     .hero-copy {
@@ -314,7 +321,10 @@
         font-size: 0.85rem;
         font-weight: 700;
         letter-spacing: 0.04em;
-        transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+        transition:
+            transform 180ms ease,
+            background 180ms ease,
+            box-shadow 180ms ease;
     }
 
     .primary-action {
@@ -406,10 +416,22 @@
         transform: translateY(-2px) scale(1.03);
     }
 
-    .category-item[data-tone='sage'] span { background: #dbe6d6; color: #3f493e; }
-    .category-item[data-tone='cream'] span { background: #f6decd; color: #534438; }
-    .category-item[data-tone='sand'] span { background: #f4dfcb; color: #524436; }
-    .category-item[data-tone='stone'] span { background: #e5e2dc; color: #4e453f; }
+    .category-item[data-tone='sage'] span {
+        background: #dbe6d6;
+        color: #3f493e;
+    }
+    .category-item[data-tone='cream'] span {
+        background: #f6decd;
+        color: #534438;
+    }
+    .category-item[data-tone='sand'] span {
+        background: #f4dfcb;
+        color: #524436;
+    }
+    .category-item[data-tone='stone'] span {
+        background: #e5e2dc;
+        color: #4e453f;
+    }
 
     .product-grid {
         display: grid;
@@ -458,7 +480,10 @@
         color: #6c5b4e;
         box-shadow: 0 8px 20px rgb(49 49 45 / 0.1);
         backdrop-filter: blur(12px);
-        transition: transform 180ms ease, color 180ms ease, background 180ms ease;
+        transition:
+            transform 180ms ease,
+            color 180ms ease,
+            background 180ms ease;
     }
 
     .favorite-button {
@@ -653,9 +678,15 @@
         border: 1px solid #d1c4bc;
     }
 
-    .swatch:nth-child(1) { background: #fdfbf7; }
-    .swatch:nth-child(2) { background: #f5e6da; }
-    .swatch:nth-child(3) { background: #dcdad4; }
+    .swatch:nth-child(1) {
+        background: #fdfbf7;
+    }
+    .swatch:nth-child(2) {
+        background: #f5e6da;
+    }
+    .swatch:nth-child(3) {
+        background: #dcdad4;
+    }
     .swatch.selected {
         border: 2px solid #6c5b4e;
         box-shadow: 0 0 0 4px #f6decd;
@@ -1008,7 +1039,9 @@
         color: #4e453f;
         font-size: 0.65rem;
         font-weight: 800;
-        transition: background 180ms ease, color 180ms ease;
+        transition:
+            background 180ms ease,
+            color 180ms ease;
     }
 
     .bottom-nav button svg {
@@ -1067,7 +1100,11 @@
         }
 
         .hero-shell::after {
-            background: linear-gradient(180deg, rgb(252 249 243 / 0.2), rgb(252 249 243 / 0.88));
+            background: linear-gradient(
+                180deg,
+                rgb(252 249 243 / 0.2),
+                rgb(252 249 243 / 0.88)
+            );
         }
 
         .hero-copy {
