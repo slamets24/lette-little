@@ -1,4 +1,5 @@
 export type OrderStatus =
+    | 'draft'
     | 'pending_payment'
     | 'paid'
     | 'packed'
@@ -6,11 +7,7 @@ export type OrderStatus =
     | 'completed'
     | 'cancelled';
 
-export type PaymentStatus =
-    | 'pending'
-    | 'paid'
-    | 'failed'
-    | 'expired';
+export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded';
 
 export type AdminOrder = {
     id: number;
@@ -21,21 +18,13 @@ export type AdminOrder = {
         phone: string;
     };
     status: OrderStatus;
-    payment_status: PaymentStatus;
+    payment_status: PaymentStatus | null;
     total: number;
     created_at: string;
     updated_at: string;
 };
 
-export type AdminOrderDetail = {
-    id: number;
-    order_number: string;
-    customer: {
-        id: number;
-        name: string;
-        email: string;
-        phone: string;
-    };
+export type AdminOrderDetail = AdminOrder & {
     address: {
         address_line_1: string;
         address_line_2: string | null;
@@ -49,7 +38,6 @@ export type AdminOrderDetail = {
     shipping_cost: number;
     total: number;
     notes: string | null;
-    status: OrderStatus;
     payment: {
         provider: string;
         status: PaymentStatus;
@@ -57,8 +45,6 @@ export type AdminOrderDetail = {
         external_reference: string | null;
         settled_at: string | null;
     } | null;
-    created_at: string;
-    updated_at: string;
 };
 
 export type AdminOrderItem = {
@@ -73,9 +59,14 @@ export type AdminOrderItem = {
 };
 
 export type OrderFilters = {
-    q?: string;
-    status?: OrderStatus | '';
-    payment_status?: PaymentStatus | '';
-    date_from?: string;
-    date_to?: string;
+    q: string;
+    status: OrderStatus | '';
+    payment_status: PaymentStatus | '';
+    date_from: string;
+    date_to: string;
+};
+
+export type OrderOption = {
+    label: string;
+    value: string;
 };
