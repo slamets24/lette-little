@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\CartController;
@@ -29,7 +30,7 @@ Route::inertia('/about', 'About')->name('about');
 Route::inertia('/journal', 'Journal')->name('journal');
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('admin/orders', AdminOrderController::class)
         ->names('admin.orders')
         ->only(['index', 'show', 'update']);
