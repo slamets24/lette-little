@@ -22,6 +22,14 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 /auth.json
+
+# Local runtime files that are generated while running or QA-ing the app.
+/storage/logs/*.log
+/storage/app/codex-qa/
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore
+/.vite
+
 /.fleet
 /.idea
 /.nova
@@ -51,3 +59,4 @@ yarn-error.log
 .codex
 .cursor
 .kiro
+.playwright-mcp

@@ -1,4 +1,8 @@
-import { computed, ref } from 'vue';
+import { router, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import CartController from '@/actions/App/Http/Controllers/CartController';
+import CartImportController from '@/actions/App/Http/Controllers/CartImportController';
+import CartItemController from '@/actions/App/Http/Controllers/CartItemController';
 
 export type CartProduct = {
     id: number;
@@ -17,15 +21,15 @@ export type CartVariant = {
 };
 
 export type CartItem = {
-    key: string;
+    id: number;
     product: CartProduct;
     variant: CartVariant;
     quantity: number;
+    line_total: number;
 };
 
 const storageKey = 'lette-little-cart';
-const items = ref<CartItem[]>([]);
-let initialized = false;
+let importAttempted = false;
 
 function canUseStorage() {
     try {
@@ -33,56 +37,6 @@ function canUseStorage() {
     } catch {
         return false;
     }
-}
-
-function normalizeQuantity(quantity: number, stock: number) {
-    const safeStock = Math.max(0, stock);
-    const safeQuantity = Number.isFinite(quantity) ? Math.floor(quantity) : 1;
-
-    return Math.min(Math.max(1, safeQuantity), safeStock || 1);
-}
-
-function persistCart() {
-    if (!canUseStorage()) {
-        return;
-    }
-
-    window.localStorage.setItem(storageKey, JSON.stringify(items.value));
-}
-
-function loadCart() {
-    if (initialized) {
-        return;
-    }
-
-    initialized = true;
-
-    if (!canUseStorage()) {
-        return;
-    }
-
-    try {
-        const storedItems = JSON.parse(
-            window.localStorage.getItem(storageKey) ?? '[]',
-        ) as CartItem[];
-
-        items.value = Array.isArray(storedItems)
-            ? storedItems.filter(
-                  (item) =>
-                      item?.key &&
-                      item.product?.id &&
-                      item.variant?.id &&
-                      item.quantity > 0,
-              )
-            : [];
-    } catch {
-        items.value = [];
-        persistCart();
-    }
-}
-
-function buildItemKey(productId: number, variantId: number) {
-    return `${productId}:${variantId}`;
 }
 
 function formatMoney(value: number) {
@@ -94,108 +48,118 @@ function formatMoney(value: number) {
 }
 
 export function useCart() {
-    loadCart();
+    const page = usePage();
+    const cartCount = computed(() => page.props.cart?.count ?? 0);
 
-    const cartCount = computed(() =>
-        items.value.reduce((total, item) => total + item.quantity, 0),
-    );
-
-    const subtotal = computed(() =>
-        items.value.reduce(
-            (total, item) => total + item.variant.price * item.quantity,
-            0,
-        ),
-    );
-
-    function addItem(
-        product: CartProduct,
-        variant: CartVariant,
-        quantity = 1,
-    ): CartItem {
-        const key = buildItemKey(product.id, variant.id);
-        const existingItem = items.value.find((item) => item.key === key);
-        const nextQuantity = normalizeQuantity(quantity, variant.stock);
-
-        if (existingItem) {
-            existingItem.quantity = normalizeQuantity(
-                existingItem.quantity + nextQuantity,
-                variant.stock,
-            );
-            existingItem.product = product;
-            existingItem.variant = variant;
-            persistCart();
-
-            return existingItem;
-        }
-
-        const item = {
-            key,
-            product,
-            variant,
-            quantity: nextQuantity,
-        };
-
-        items.value.push(item);
-        persistCart();
-
-        return item;
+    function addItem(productVariantId: number, quantity = 1): void {
+        router.post(
+            CartItemController.store.url(),
+            {
+                product_variant_id: productVariantId,
+                quantity,
+            },
+            {
+                preserveScroll: true,
+            },
+        );
     }
 
-    function updateQuantity(key: string, quantity: number) {
-        const item = items.value.find((cartItem) => cartItem.key === key);
+    function updateQuantity(cartItemId: number, quantity: number): void {
+        router.patch(
+            CartItemController.update.url(cartItemId),
+            { quantity },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
+    }
 
-        if (!item) {
+    function removeItem(cartItemId: number): void {
+        router.delete(CartItemController.destroy.url(cartItemId), {
+            preserveScroll: true,
+        });
+    }
+
+    function clearCart(): void {
+        router.delete(CartController.destroy.url(), {
+            preserveScroll: true,
+        });
+    }
+
+    function importLocalStorageCart(): void {
+        if (importAttempted || !canUseStorage()) {
             return;
         }
 
-        item.quantity = normalizeQuantity(quantity, item.variant.stock);
-        persistCart();
+        importAttempted = true;
+
+        try {
+            const stored = window.localStorage.getItem(storageKey);
+
+            if (!stored) {
+                return;
+            }
+
+            const oldCart = JSON.parse(stored);
+
+            if (!Array.isArray(oldCart) || oldCart.length === 0) {
+                window.localStorage.removeItem(storageKey);
+
+                return;
+            }
+
+            const items = oldCart
+                .filter(
+                    (item) =>
+                        item?.variant?.id &&
+                        item.quantity > 0 &&
+                        Number.isFinite(item.quantity),
+                )
+                .map((item) => ({
+                    product_variant_id: item.variant.id,
+                    quantity: Math.floor(item.quantity),
+                }));
+
+            if (items.length === 0) {
+                window.localStorage.removeItem(storageKey);
+
+                return;
+            }
+
+            fetch(CartImportController.store.url(), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN':
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute('content') ?? '',
+                },
+                body: JSON.stringify({ items }),
+            })
+                .then(() => {
+                    window.localStorage.removeItem(storageKey);
+                    router.reload({ only: ['cart'] });
+                })
+                .catch(() => {
+                    // Silent fail
+                });
+        } catch {
+            window.localStorage.removeItem(storageKey);
+        }
     }
 
-    function removeItem(key: string) {
-        items.value = items.value.filter((item) => item.key !== key);
-        persistCart();
-    }
-
-    function clearCart() {
-        items.value = [];
-        persistCart();
-    }
-
-    function whatsAppCheckoutUrl() {
-        const lines = [
-            'Halo Lette Little, saya ingin pesan:',
-            '',
-            ...items.value.flatMap((item, index) => [
-                `${index + 1}. ${item.product.name}`,
-                `Variant: ${item.variant.color} / ${item.variant.size}`,
-                `Qty: ${item.quantity}`,
-                `Harga: ${formatMoney(item.variant.price)}`,
-                '',
-            ]),
-            `Subtotal: ${formatMoney(subtotal.value)}`,
-            '',
-            'Nama:',
-            'Alamat:',
-            'Catatan:',
-        ];
-        const phone = import.meta.env.VITE_LETTE_WHATSAPP_NUMBER as
-            | string
-            | undefined;
-        const baseUrl = phone ? `https://wa.me/${phone}` : 'https://wa.me/';
-
-        return `${baseUrl}?text=${encodeURIComponent(lines.join('\n'))}`;
+    if (typeof window !== 'undefined' && !importAttempted) {
+        importLocalStorageCart();
     }
 
     return {
-        items,
         cartCount,
-        subtotal,
         addItem,
         updateQuantity,
         removeItem,
         clearCart,
         formatMoney,
-        whatsAppCheckoutUrl,
     };
 }

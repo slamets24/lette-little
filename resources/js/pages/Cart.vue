@@ -1,25 +1,25 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { Minus, Plus, ShoppingBag, Trash2 } from '@lucide/vue';
+import { show as checkout } from '@/actions/App/Http/Controllers/CheckoutController';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
+import type { CartItem } from '@/composables/useCart';
 import { useCart } from '@/composables/useCart';
+import { shop } from '@/routes';
 
-const {
-    items,
-    subtotal,
-    updateQuantity,
-    removeItem,
-    formatMoney,
-    whatsAppCheckoutUrl,
-} = useCart();
+type Cart = {
+    items: CartItem[];
+    count: number;
+    subtotal: number;
+};
 
-function checkout() {
-    if (!items.value.length) {
-        return;
-    }
+defineProps<{
+    cart: Cart;
+    cartAdjustments?: string[];
+}>();
 
-    window.open(whatsAppCheckoutUrl(), '_blank', 'noopener,noreferrer');
-}
+const { updateQuantity, removeItem, formatMoney } = useCart();
+
 </script>
 
 <template>
@@ -31,16 +31,16 @@ function checkout() {
                 <p>CART</p>
                 <h1>Your gentle picks.</h1>
                 <span>
-                    Review sizes, colors, and quantity before sending your order
-                    to WhatsApp.
+                    Review sizes, colors, and quantity before placing your order
+                    securely.
                 </span>
             </div>
 
-            <div v-if="items.length" class="cart-layout">
+            <div v-if="cart.items.length" class="cart-layout">
                 <section class="cart-items" aria-label="Cart items">
                     <article
-                        v-for="item in items"
-                        :key="item.key"
+                        v-for="item in cart.items"
+                        :key="item.id"
                         class="cart-item"
                     >
                         <Link
@@ -69,9 +69,7 @@ function checkout() {
                             <button
                                 type="button"
                                 aria-label="Decrease quantity"
-                                @click="
-                                    updateQuantity(item.key, item.quantity - 1)
-                                "
+                                @click="updateQuantity(item.id, item.quantity - 1)"
                             >
                                 <Minus />
                             </button>
@@ -79,23 +77,21 @@ function checkout() {
                             <button
                                 type="button"
                                 aria-label="Increase quantity"
-                                @click="
-                                    updateQuantity(item.key, item.quantity + 1)
-                                "
+                                @click="updateQuantity(item.id, item.quantity + 1)"
                             >
                                 <Plus />
                             </button>
                         </div>
 
                         <strong class="line-total">
-                            {{ formatMoney(item.variant.price * item.quantity) }}
+                            {{ formatMoney(item.line_total) }}
                         </strong>
 
                         <button
                             type="button"
                             class="remove-button"
                             :aria-label="`Remove ${item.product.name}`"
-                            @click="removeItem(item.key)"
+                            @click="removeItem(item.id)"
                         >
                             <Trash2 />
                         </button>
@@ -106,16 +102,16 @@ function checkout() {
                     <p>Order Summary</p>
                     <div>
                         <span>Subtotal</span>
-                        <strong>{{ formatMoney(subtotal) }}</strong>
+                        <strong>{{ formatMoney(cart.subtotal) }}</strong>
                     </div>
                     <small>
-                        Shipping and final availability will be confirmed by our
-                        team on WhatsApp.
+                        Shipping and payment will be confirmed in the secure
+                        checkout flow.
                     </small>
-                    <button type="button" @click="checkout">
-                        Checkout via WhatsApp
-                    </button>
-                    <Link href="/shop">Continue Shopping</Link>
+                    <Link :href="checkout.url()" class="checkout-link">
+                        Checkout
+                    </Link>
+                    <Link :href="shop.url()">Continue Shopping</Link>
                 </aside>
             </div>
 
@@ -123,10 +119,10 @@ function checkout() {
                 <ShoppingBag />
                 <h2>Your cart is empty.</h2>
                 <p>
-                    Add your favorite soft essentials first, then checkout by
-                    WhatsApp.
+                    Add your favorite soft essentials first, then continue to
+                    checkout.
                 </p>
-                <Link href="/shop">Shop Now</Link>
+                <Link :href="shop.url()">Shop Now</Link>
             </section>
         </section>
     </StorefrontLayout>
@@ -323,6 +319,7 @@ function checkout() {
 }
 
 .summary-card button,
+.summary-card a.checkout-link,
 .empty-cart a {
     background: #6c5b4e;
     color: #fffdf8;
@@ -331,6 +328,10 @@ function checkout() {
 .summary-card a {
     background: #fffdf8;
     color: #4e453f;
+}
+
+.summary-card a.checkout-link {
+    color: #fffdf8;
 }
 
 .empty-cart {

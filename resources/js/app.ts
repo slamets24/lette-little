@@ -11,6 +11,8 @@ const storefrontPages = [
     'Shop',
     'Product',
     'Cart',
+    'Checkout',
+    'OrderConfirmation',
     'Collection',
     'About',
     'Journal',

@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['product_id', 'sku', 'size', 'color', 'color_hex', 'price', 'stock', 'is_active'])]
 class ProductVariant extends Model
 {
     use HasFactory;
+
+    /**
+     * @var list<string>
+     */
+    protected $fillable = ['product_id', 'sku', 'size', 'color', 'color_hex', 'price', 'stock', 'is_active'];
 
     /**
      * @return BelongsTo<Product, $this>
@@ -19,6 +23,30 @@ class ProductVariant extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * @return HasMany<CartItem, $this>
+     */
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
+    /**
+     * @return HasMany<OrderItem, $this>
+     */
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * @return HasMany<StockMovement, $this>
+     */
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
     }
 
     /**

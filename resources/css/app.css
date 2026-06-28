@@ -77,6 +77,21 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
+
+    button:not(:disabled),
+    a[href],
+    summary,
+    select:not(:disabled),
+    label[for],
+    label:has(input:not(:disabled)),
+    input[type='button']:not(:disabled),
+    input[type='checkbox']:not(:disabled),
+    input[type='radio']:not(:disabled),
+    input[type='reset']:not(:disabled),
+    input[type='submit']:not(:disabled),
+    [role='button']:not([aria-disabled='true']) {
+        cursor: pointer;
+    }
 }
 
 @layer utilities {
@@ -215,6 +230,7 @@
         height: 2.5rem;
         border-radius: 9999px;
         color: #6c5b4e;
+        cursor: pointer;
         transition:
             background 180ms ease,
             transform 180ms ease;
@@ -321,6 +337,7 @@
         font-size: 0.85rem;
         font-weight: 700;
         letter-spacing: 0.04em;
+        cursor: pointer;
         transition:
             transform 180ms ease,
             background 180ms ease,
@@ -375,6 +392,7 @@
         color: #6c5b4e;
         font-size: 0.8rem;
         font-weight: 700;
+        cursor: pointer;
     }
 
     .category-rail {
@@ -399,6 +417,7 @@
         color: #1c1c18;
         font-size: 0.82rem;
         font-weight: 700;
+        cursor: pointer;
     }
 
     .category-item span {
@@ -478,6 +497,7 @@
         border-radius: 9999px;
         background: rgb(255 255 255 / 0.82);
         color: #6c5b4e;
+        cursor: pointer;
         box-shadow: 0 8px 20px rgb(49 49 45 / 0.1);
         backdrop-filter: blur(12px);
         transition:
@@ -533,6 +553,7 @@
         font-weight: 700;
         line-height: 1.35;
         text-align: left;
+        cursor: pointer;
     }
 
     .product-copy strong,
@@ -660,6 +681,7 @@
     .option-label button {
         text-decoration: underline;
         text-underline-offset: 3px;
+        cursor: pointer;
     }
 
     .swatch-row,
@@ -676,6 +698,7 @@
         height: 2.5rem;
         border-radius: 9999px;
         border: 1px solid #d1c4bc;
+        cursor: pointer;
     }
 
     .swatch:nth-child(1) {
@@ -705,6 +728,7 @@
         color: #4e453f;
         font-size: 0.8rem;
         font-weight: 700;
+        cursor: pointer;
     }
 
     .size-grid button.selected,
@@ -832,6 +856,7 @@
         height: 2rem;
         place-items: center;
         border-radius: 9999px;
+        cursor: pointer;
     }
 
     .qty-control svg,
@@ -845,6 +870,7 @@
         right: 0.65rem;
         top: 0.65rem;
         color: #80756e;
+        cursor: pointer;
     }
 
     .summary-panel dl {
@@ -904,6 +930,12 @@
     .payment-card,
     .order-card {
         position: relative;
+    }
+
+    .address-card,
+    .payment-card,
+    .profile-actions button {
+        cursor: pointer;
     }
 
     .address-card.selected,
@@ -1039,6 +1071,7 @@
         color: #4e453f;
         font-size: 0.65rem;
         font-weight: 800;
+        cursor: pointer;
         transition:
             background 180ms ease,
             color 180ms ease;

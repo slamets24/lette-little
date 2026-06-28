@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Cart\CartManager;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -40,6 +41,9 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
+            ],
+            'cart' => fn () => [
+                'count' => app(CartManager::class)->count($request),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

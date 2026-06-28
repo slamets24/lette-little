@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     ChevronDown,
     Cloud,
@@ -10,21 +10,22 @@ import {
     UserRound,
     X,
 } from '@lucide/vue';
-import { ref } from 'vue';
-import { useCart } from '@/composables/useCart';
+import { computed, ref } from 'vue';
+import { about, cart, collection, home, journal, login, shop } from '@/routes';
 
 defineProps<{
     active: 'shop' | 'collection' | 'about' | 'journal' | 'home' | 'cart';
 }>();
 
+const page = usePage();
 const menuOpen = ref(false);
-const { cartCount } = useCart();
+const cartCount = computed(() => page.props.cart?.count ?? 0);
 
 const navItems = [
-    { label: 'SHOP', href: '/shop', key: 'shop' },
-    { label: 'COLLECTION', href: '/collection', key: 'collection' },
-    { label: 'ABOUT', href: '/about', key: 'about' },
-    { label: 'JOURNAL', href: '/journal', key: 'journal' },
+    { label: 'SHOP', href: shop.url(), key: 'shop' },
+    { label: 'COLLECTION', href: collection.url(), key: 'collection' },
+    { label: 'ABOUT', href: about.url(), key: 'about' },
+    { label: 'JOURNAL', href: journal.url(), key: 'journal' },
 ] as const;
 </script>
 
@@ -68,7 +69,7 @@ const navItems = [
                 </div>
 
                 <Link
-                    href="/"
+                    :href="home.url()"
                     class="brand-lockup"
                     :class="{ active: active === 'home' }"
                     aria-label="Lette Little home"
@@ -82,13 +83,13 @@ const navItems = [
                     <button type="button" class="currency-button">
                         IDR <ChevronDown />
                     </button>
-                    <Link href="/shop" aria-label="Search products"
+                    <Link :href="shop.url()" aria-label="Search products"
                         ><Search
                     /></Link>
-                    <Link href="/login" aria-label="Account"
+                    <Link :href="login.url()" aria-label="Account"
                         ><UserRound
                     /></Link>
-                    <Link href="/cart" class="cart-link" aria-label="Cart"
+                    <Link :href="cart.url()" class="cart-link" aria-label="Cart"
                         ><ShoppingBag /><span>({{ cartCount }})</span></Link
                     >
                 </div>
@@ -105,7 +106,7 @@ const navItems = [
             <div class="mobile-drawer-panel">
                 <div class="mobile-drawer-top">
                     <Link
-                        href="/"
+                        :href="home.url()"
                         class="mobile-brand"
                         @click="menuOpen = false"
                         ><Cloud /> Lette Little</Link
@@ -163,11 +164,11 @@ const navItems = [
 
                 <section class="footer-group">
                     <h3>SHOP</h3>
-                    <Link href="/shop">All Products</Link>
-                    <Link href="/collection">Dresses</Link>
-                    <Link href="/collection">Rompers</Link>
-                    <Link href="/collection">Sets</Link>
-                    <Link href="/collection">Sleepwear</Link>
+                    <Link :href="shop.url()">All Products</Link>
+                    <Link :href="collection.url()">Dresses</Link>
+                    <Link :href="collection.url()">Rompers</Link>
+                    <Link :href="collection.url()">Sets</Link>
+                    <Link :href="collection.url()">Sleepwear</Link>
                 </section>
 
                 <section class="footer-group">
@@ -180,8 +181,8 @@ const navItems = [
 
                 <section class="footer-group">
                     <h3>ABOUT</h3>
-                    <Link href="/about">Our Story</Link>
-                    <Link href="/journal">Journal</Link>
+                    <Link :href="about.url()">Our Story</Link>
+                    <Link :href="journal.url()">Journal</Link>
                     <a href="mailto:hello@lettelittle.id">Contact Us</a>
                 </section>
 
@@ -214,14 +215,14 @@ const navItems = [
     min-height: 100vh;
     background: #fcf9f3;
     color: #4e453f;
-    font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+    font-family: 'KunKun', 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
 }
 
 .lette-site :deep(h1),
 .lette-site :deep(h2),
 .lette-site :deep(h3),
 .brand-lockup span {
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    font-family: 'KunKun', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 }
 
 .shipping-bar {
@@ -373,7 +374,7 @@ const navItems = [
 .mobile-brand {
     gap: 8px;
     color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    font-family: 'KunKun', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
     font-size: 18px;
 }
 

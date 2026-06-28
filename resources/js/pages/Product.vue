@@ -13,6 +13,7 @@ import ProductCard from '@/components/lette/ProductCard.vue';
 import type { ProductCardProduct } from '@/components/lette/ProductCard.vue';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
 import { useCart } from '@/composables/useCart';
+import { cart, shop } from '@/routes';
 
 type ProductImage = {
     id: number;
@@ -109,24 +110,7 @@ function addToCart() {
         return;
     }
 
-    addItem(
-        {
-            id: props.product.id,
-            name: props.product.name,
-            slug: props.product.slug,
-            image: currentImage.value,
-        },
-        {
-            id: selectedVariant.value.id,
-            sku: selectedVariant.value.sku,
-            size: selectedVariant.value.size,
-            color: selectedVariant.value.color,
-            price: selectedVariant.value.price,
-            stock: selectedVariant.value.stock,
-        },
-        quantity.value,
-    );
-
+    addItem(selectedVariant.value.id, quantity.value);
     justAdded.value = true;
 }
 
@@ -145,11 +129,11 @@ function money(value: number) {
 
         <section class="product-shell">
             <nav class="breadcrumb" aria-label="Breadcrumb">
-                <Link href="/shop">Shop</Link>
+                <Link :href="shop.url()">Shop</Link>
                 <span>/</span>
-                <Link :href="`/shop?category=${product.category.slug}`">{{
-                    product.category.name
-                }}</Link>
+                <Link
+                    :href="shop.url({ query: { category: product.category.slug } })"
+                >{{ product.category.name }}</Link>
             </nav>
 
             <div class="product-layout">
@@ -249,11 +233,11 @@ function money(value: number) {
                             >
                                 <ShoppingBag /> Add to Cart
                             </button>
-                            <Link href="/cart">View Cart</Link>
+                            <Link :href="cart.url()">View Cart</Link>
                         </div>
 
                         <p v-if="justAdded" class="cart-notice">
-                            Added to cart. You can continue shopping or checkout by WhatsApp.
+                            Added to cart. You can continue shopping or continue to checkout.
                         </p>
                     </div>
 
