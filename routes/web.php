@@ -27,7 +27,7 @@ Route::inertia('/collection', 'Collection')->name('collection');
 Route::inertia('/about', 'About')->name('about');
 Route::inertia('/journal', 'Journal')->name('journal');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
     Route::resource('admin/products', AdminProductController::class)
         ->names('admin.products')

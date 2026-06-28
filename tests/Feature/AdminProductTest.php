@@ -22,11 +22,18 @@ class AdminProductTest extends TestCase
             ->assertRedirect(route('login'));
     }
 
-    public function test_authenticated_users_can_view_admin_products(): void
+    public function test_non_admin_users_cannot_view_admin_products(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('admin.products.index'))
+            ->assertForbidden();
+    }
+
+    public function test_admin_users_can_view_admin_products(): void
     {
         $this->seed(CatalogSeeder::class);
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->admin()->create())
             ->get(route('admin.products.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
@@ -37,7 +44,7 @@ class AdminProductTest extends TestCase
             );
     }
 
-    public function test_authenticated_users_can_create_products_with_variants(): void
+    public function test_admin_users_can_create_products_with_variants(): void
     {
         $category = Category::query()->create([
             'name' => 'Sets',
@@ -46,7 +53,7 @@ class AdminProductTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->actingAs(User::factory()->create())
+        $response = $this->actingAs(User::factory()->admin()->create())
             ->post(route('admin.products.store'), $this->payload([
                 'category_id' => $category->id,
             ]));
@@ -66,7 +73,7 @@ class AdminProductTest extends TestCase
             ->count());
     }
 
-    public function test_authenticated_users_can_update_products_and_stock(): void
+    public function test_admin_users_can_update_products_and_stock(): void
     {
         $category = Category::query()->create([
             'name' => 'Dresses',
@@ -101,7 +108,7 @@ class AdminProductTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->actingAs(User::factory()->create())
+        $response = $this->actingAs(User::factory()->admin()->create())
             ->patch(route('admin.products.update', $product), $this->payload([
                 'category_id' => $category->id,
                 'name' => 'Cloud Dress Updated',
@@ -170,7 +177,7 @@ class AdminProductTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->admin()->create())
             ->from(route('admin.products.create'))
             ->post(route('admin.products.store'), $this->payload([
                 'category_id' => $category->id,
