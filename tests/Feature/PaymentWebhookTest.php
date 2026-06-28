@@ -124,6 +124,46 @@ class PaymentWebhookTest extends TestCase
         $this->assertDatabaseCount('stock_movements', 0);
     }
 
+    public function test_late_success_webhook_does_not_downgrade_fulfilled_order(): void
+    {
+        $order = $this->createPendingOrder();
+        $order->forceFill(['status' => OrderStatus::Packed])->save();
+        $order->payment()->firstOrFail()->forceFill([
+            'status' => PaymentStatus::Completed,
+            'settled_at' => now()->subDay(),
+        ])->save();
+
+        $this->postJson(route('payments.midtrans.webhook'), $this->payload($order, 'settlement'))
+            ->assertOk();
+
+        $order->refresh();
+        $payment = $order->payment()->firstOrFail();
+
+        $this->assertSame(OrderStatus::Packed, $order->status);
+        $this->assertSame(PaymentStatus::Completed, $payment->status);
+        $this->assertSame('settlement', $payment->raw_payload['transaction_status']);
+    }
+
+    public function test_late_success_webhook_does_not_resurrect_cancelled_order(): void
+    {
+        [$order, $variant] = $this->createReservedOrder();
+        $reservedStock = $variant->fresh()->stock;
+
+        $this->postJson(route('payments.midtrans.webhook'), $this->payload($order, 'expire'))
+            ->assertOk();
+        $this->postJson(route('payments.midtrans.webhook'), $this->payload($order, 'settlement'))
+            ->assertOk();
+
+        $order->refresh();
+        $payment = $order->payment()->firstOrFail();
+
+        $this->assertSame(OrderStatus::Cancelled, $order->status);
+        $this->assertSame(PaymentStatus::Failed, $payment->status);
+        $this->assertSame($reservedStock + 2, $variant->fresh()->stock);
+        $this->assertDatabaseCount('stock_movements', 1);
+        $this->assertSame('settlement', $payment->raw_payload['transaction_status']);
+    }
+
     /**
      * @return array{0: Order, 1: ProductVariant}
      */

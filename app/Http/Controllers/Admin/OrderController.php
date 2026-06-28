@@ -6,8 +6,11 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ListOrdersRequest;
+use App\Http\Requests\Admin\UpdateOrderStatusRequest;
 use App\Models\Order;
+use App\Services\Order\OrderFulfillmentManager;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -38,7 +41,7 @@ class OrderController extends Controller
     /**
      * Display an admin order detail page.
      */
-    public function show(ListOrdersRequest $request, Order $order): Response
+    public function show(ListOrdersRequest $request, Order $order, OrderFulfillmentManager $fulfillment): Response
     {
         $order->load([
             'address:id,customer_id,address_line_1,address_line_2,city,province,postal_code,country',
@@ -50,7 +53,22 @@ class OrderController extends Controller
         return Inertia::render('admin/orders/Show', [
             'order' => $this->presentOrderDetail($order),
             'filters' => $this->filters($request->validated()),
+            'availableTransitions' => $fulfillment->availableTransitions($order),
         ]);
+    }
+
+    /**
+     * Update an order fulfillment status.
+     */
+    public function update(UpdateOrderStatusRequest $request, Order $order, OrderFulfillmentManager $fulfillment): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $fulfillment->transition($order, OrderStatus::from($validated['status']));
+
+        return redirect()
+            ->route('admin.orders.show', $order)
+            ->with('toast', ['type' => 'success', 'message' => __('Order status updated.')]);
     }
 
     /**

@@ -70,3 +70,8 @@ export type OrderOption = {
     label: string;
     value: string;
 };
+
+export type OrderTransition = {
+    label: string;
+    value: OrderStatus;
+};

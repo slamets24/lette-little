@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
-use App\Enums\StockMovementType;
 use App\Models\Order;
 use App\Models\Payment;
-use App\Models\StockMovement;
+use App\Services\Order\OrderFulfillmentManager;
 use App\Services\Payment\MidtransService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +18,7 @@ class MidtransWebhookController extends Controller
     /**
      * Handle Midtrans payment notifications.
      */
-    public function __invoke(Request $request, MidtransService $midtransService): JsonResponse
+    public function __invoke(Request $request, MidtransService $midtransService, OrderFulfillmentManager $fulfillment): JsonResponse
     {
         $data = $request->validate([
             'order_id' => ['required', 'string'],
@@ -65,7 +64,7 @@ class MidtransWebhookController extends Controller
             return response()->json(['message' => 'Gross amount does not match.'], 422);
         }
 
-        DB::transaction(function () use ($order, $data, $request): void {
+        DB::transaction(function () use ($order, $data, $request, $fulfillment): void {
             $order = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
             $payment = Payment::query()->where('order_id', $order->id)->lockForUpdate()->firstOrFail();
             $status = $data['transaction_status'];
@@ -76,19 +75,29 @@ class MidtransWebhookController extends Controller
             ]);
 
             if ($this->isSuccessfulPayment($status, $data['fraud_status'] ?? null)) {
+                if (! in_array($order->status, [OrderStatus::Draft, OrderStatus::PendingPayment], true)) {
+                    $payment->save();
+
+                    return;
+                }
+
                 $payment->forceFill([
                     'status' => PaymentStatus::Completed,
                     'settled_at' => $payment->settled_at ?? now(),
                 ])->save();
 
-                if ($order->status !== OrderStatus::Paid) {
-                    $order->forceFill(['status' => OrderStatus::Paid])->save();
-                }
+                $order->forceFill(['status' => OrderStatus::Paid])->save();
 
                 return;
             }
 
-            if ($payment->status === PaymentStatus::Completed || $order->status === OrderStatus::Paid) {
+            if ($payment->status === PaymentStatus::Completed || in_array($order->status, [
+                OrderStatus::Paid,
+                OrderStatus::Packed,
+                OrderStatus::Shipped,
+                OrderStatus::Completed,
+                OrderStatus::Cancelled,
+            ], true)) {
                 $payment->save();
 
                 return;
@@ -104,7 +113,7 @@ class MidtransWebhookController extends Controller
             if (in_array($status, ['deny', 'cancel', 'expire', 'failure'], true)) {
                 $payment->forceFill(['status' => PaymentStatus::Failed])->save();
                 $order->forceFill(['status' => OrderStatus::Cancelled])->save();
-                $this->releaseStock($order);
+                $fulfillment->releaseStockOnce($order);
 
                 return;
             }
@@ -133,33 +142,5 @@ class MidtransWebhookController extends Controller
     private function grossAmountMatches(string $grossAmount, int $expectedAmount): bool
     {
         return (int) round((float) $grossAmount) === $expectedAmount;
-    }
-
-    private function releaseStock(Order $order): void
-    {
-        $alreadyReleased = StockMovement::query()
-            ->where('reference_type', Order::class)
-            ->where('reference_id', $order->id)
-            ->where('type', StockMovementType::Cancellation->value)
-            ->exists();
-
-        if ($alreadyReleased) {
-            return;
-        }
-
-        $order->loadMissing('items.variant');
-
-        foreach ($order->items as $item) {
-            $item->variant()->increment('stock', $item->quantity);
-
-            StockMovement::query()->create([
-                'product_variant_id' => $item->product_variant_id,
-                'quantity' => $item->quantity,
-                'type' => StockMovementType::Cancellation,
-                'reference_type' => Order::class,
-                'reference_id' => $order->id,
-                'notes' => "Cancelled order {$order->order_number} item {$item->id}",
-            ]);
-        }
     }
 }

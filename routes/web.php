@@ -32,7 +32,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
     Route::resource('admin/orders', AdminOrderController::class)
         ->names('admin.orders')
-        ->only(['index', 'show']);
+        ->only(['index', 'show', 'update']);
     Route::resource('admin/products', AdminProductController::class)
         ->names('admin.products')
         ->except(['show', 'destroy']);

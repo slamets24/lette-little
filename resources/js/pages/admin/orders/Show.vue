@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft, CreditCard, MapPin, Package, UserRound } from '@lucide/vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ArrowLeft, CheckCircle2, CreditCard, MapPin, Package, PackageCheck, UserRound, XCircle } from '@lucide/vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,13 +9,20 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { index } from '@/routes/admin/orders';
-import type { AdminOrderDetail, OrderFilters, OrderStatus, PaymentStatus } from '@/types/admin/order';
+import { index, update } from '@/routes/admin/orders';
+import type { AdminOrderDetail, OrderFilters, OrderStatus, OrderTransition, PaymentStatus } from '@/types/admin/order';
 
-defineProps<{
+const props = defineProps<{
     order: AdminOrderDetail;
     filters: OrderFilters;
+    availableTransitions: OrderTransition[];
 }>();
+
+const form = useForm<{
+    status: OrderStatus | '';
+}>({
+    status: '',
+});
 
 const moneyFormatter = new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -82,6 +89,22 @@ function paymentBadgeVariant(status: PaymentStatus | null): 'default' | 'seconda
     }
 
     return 'secondary';
+}
+
+function transitionButtonVariant(status: OrderStatus): 'default' | 'secondary' | 'destructive' | 'outline' {
+    return status === 'cancelled' ? 'destructive' : 'default';
+}
+
+function submitTransition(status: OrderStatus): void {
+    if (status === 'cancelled' && !window.confirm('Cancel this order?')) {
+        return;
+    }
+
+    form.status = status;
+    form.patch(update.url(props.order.order_number), {
+        preserveScroll: true,
+        onFinish: () => form.reset('status'),
+    });
 }
 
 defineOptions({
@@ -189,6 +212,44 @@ defineOptions({
             </div>
 
             <aside class="grid gap-4 content-start">
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="flex items-center gap-2 text-base">
+                            <PackageCheck class="size-4" />
+                            Fulfillment
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent class="grid gap-3 text-sm">
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="text-muted-foreground">Current</span>
+                            <Badge :variant="orderBadgeVariant(order.status)">
+                                {{ readableStatus(order.status) }}
+                            </Badge>
+                        </div>
+                        <div v-if="availableTransitions.length > 0" class="grid gap-2">
+                            <Button
+                                v-for="transition in availableTransitions"
+                                :key="transition.value"
+                                type="button"
+                                :variant="transitionButtonVariant(transition.value)"
+                                class="w-full justify-start"
+                                :disabled="form.processing"
+                                @click="submitTransition(transition.value)"
+                            >
+                                <XCircle v-if="transition.value === 'cancelled'" />
+                                <CheckCircle2 v-else />
+                                {{ transition.label }}
+                            </Button>
+                        </div>
+                        <p v-else class="text-sm text-muted-foreground">
+                            No fulfillment actions available.
+                        </p>
+                        <p v-if="form.errors.status" class="text-sm font-medium text-destructive">
+                            {{ form.errors.status }}
+                        </p>
+                    </CardContent>
+                </Card>
+
                 <Card>
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2 text-base">
