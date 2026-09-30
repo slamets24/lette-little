@@ -19,7 +19,6 @@ defineProps<{
 }>();
 
 const { updateQuantity, removeItem, formatMoney } = useCart();
-
 </script>
 
 <template>
@@ -51,6 +50,8 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
                             <img
                                 :src="item.product.image"
                                 :alt="item.product.name"
+                                width="600"
+                                height="600"
                             />
                         </Link>
 
@@ -59,17 +60,22 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
                                 {{ item.product.name }}
                             </Link>
                             <span>
-                                {{ item.variant.color }} / {{ item.variant.size }}
+                                {{ item.variant.color }} /
+                                {{ item.variant.size }}
                             </span>
                             <small>SKU {{ item.variant.sku }}</small>
-                            <strong>{{ formatMoney(item.variant.price) }}</strong>
+                            <strong>{{
+                                formatMoney(item.variant.price)
+                            }}</strong>
                         </div>
 
                         <div class="quantity-control">
                             <button
                                 type="button"
                                 aria-label="Decrease quantity"
-                                @click="updateQuantity(item.id, item.quantity - 1)"
+                                @click="
+                                    updateQuantity(item.id, item.quantity - 1)
+                                "
                             >
                                 <Minus />
                             </button>
@@ -77,7 +83,9 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
                             <button
                                 type="button"
                                 aria-label="Increase quantity"
-                                @click="updateQuantity(item.id, item.quantity + 1)"
+                                @click="
+                                    updateQuantity(item.id, item.quantity + 1)
+                                "
                             >
                                 <Plus />
                             </button>

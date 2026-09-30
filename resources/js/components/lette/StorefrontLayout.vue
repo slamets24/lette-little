@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import {
     Cloud,
     Mail,
@@ -26,6 +26,7 @@ import {
     terms,
 } from '@/routes';
 import { index as ordersIndex } from '@/routes/orders';
+import { category as shopCategory } from '@/routes/shop';
 
 defineProps<{
     active:
@@ -133,19 +134,6 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <Head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossorigin="anonymous"
-        />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-        />
-    </Head>
-
     <div class="lette-site">
         <div class="shipping-bar">
             SHIPS ACROSS INDONESIA · COURIER QUOTE AFTER CHECKOUT
@@ -266,10 +254,18 @@ onBeforeUnmount(() => {
                         <a
                             href="https://instagram.com/lettelittle.id"
                             aria-label="Instagram"
-                            ><img src="/images/lette/instagram.webp" alt=""
+                            ><img
+                                src="/images/lette/instagram.webp"
+                                alt=""
+                                width="96"
+                                height="96"
                         /></a>
                         <a href="https://facebook.com" aria-label="Facebook"
-                            ><img src="/images/lette/facebook.webp" alt=""
+                            ><img
+                                src="/images/lette/facebook.webp"
+                                alt=""
+                                width="96"
+                                height="96"
                         /></a>
                         <a href="mailto:hello@lettelittle.id" aria-label="Email"
                             ><Mail
@@ -283,18 +279,10 @@ onBeforeUnmount(() => {
                 <section class="footer-group">
                     <h3>SHOP</h3>
                     <Link :href="shop.url()">All Products</Link>
-                    <Link :href="shop.url({ query: { category: 'dresses' } })"
-                        >Dresses</Link
-                    >
-                    <Link :href="shop.url({ query: { category: 'rompers' } })"
-                        >Rompers</Link
-                    >
-                    <Link :href="shop.url({ query: { category: 'sets' } })"
-                        >Sets</Link
-                    >
-                    <Link :href="shop.url({ query: { category: 'sleepwear' } })"
-                        >Sleepwear</Link
-                    >
+                    <Link :href="shopCategory.url('dresses')">Dresses</Link>
+                    <Link :href="shopCategory.url('rompers')">Rompers</Link>
+                    <Link :href="shopCategory.url('sets')">Sets</Link>
+                    <Link :href="shopCategory.url('sleepwear')">Sleepwear</Link>
                 </section>
 
                 <section class="footer-group">

@@ -17,7 +17,12 @@ import { journalArticles } from '@/data/lette';
 
         <section class="journal-grid">
             <article v-for="article in journalArticles" :key="article.title">
-                <img :src="article.image" :alt="article.title" />
+                <img
+                    :src="article.image"
+                    :alt="article.title"
+                    width="630"
+                    height="600"
+                />
                 <div>
                     <time>{{ article.date }}</time>
                     <h2>{{ article.title }}</h2>
@@ -74,6 +79,7 @@ import { journalArticles } from '@/data/lette';
 .journal-grid img {
     aspect-ratio: 1.05;
     width: 100%;
+    height: auto;
     object-fit: cover;
 }
 

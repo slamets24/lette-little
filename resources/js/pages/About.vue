@@ -24,6 +24,8 @@ import { asset, benefits } from '@/data/lette';
             <img
                 :src="asset('story.jpg')"
                 alt="Lette Little design notes and packaging"
+                width="512"
+                height="512"
             />
         </section>
 
@@ -105,6 +107,7 @@ import { asset, benefits } from '@/data/lette';
 
 .about-hero img {
     width: 100%;
+    height: auto;
     aspect-ratio: 1.15;
     object-fit: cover;
 }

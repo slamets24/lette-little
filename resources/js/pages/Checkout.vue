@@ -187,6 +187,7 @@ const { formatMoney } = useCart();
                                     name="postal_code"
                                     type="text"
                                     autocomplete="postal-code"
+                                    inputmode="numeric"
                                     required
                                     placeholder="40111"
                                 />
@@ -202,6 +203,7 @@ const { formatMoney } = useCart();
                                     type="text"
                                     value="ID"
                                     maxlength="2"
+                                    autocomplete="country"
                                     required
                                 />
                                 <small v-if="errors.country">
@@ -287,6 +289,8 @@ const { formatMoney } = useCart();
                             <img
                                 :src="item.product.image"
                                 :alt="item.product.name"
+                                width="64"
+                                height="64"
                             />
                             <div>
                                 <strong>{{ item.product.name }}</strong>

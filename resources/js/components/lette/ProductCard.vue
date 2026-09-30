@@ -52,7 +52,13 @@ const sizeLabel = computed(
             :href="product.href ?? '/shop'"
             :aria-label="`View ${product.name}`"
         >
-            <img :src="product.image" :alt="product.name" loading="lazy" />
+            <img
+                :src="product.image"
+                :alt="product.name"
+                width="600"
+                height="600"
+                loading="lazy"
+            />
         </Link>
         <div class="product-meta">
             <span v-if="categoryLabel" class="product-category">{{

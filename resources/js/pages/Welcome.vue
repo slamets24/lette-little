@@ -6,6 +6,7 @@ import type { ProductCardProduct } from '@/components/lette/ProductCard.vue';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
 import { asset, benefits, categories } from '@/data/lette';
 import { shop } from '@/routes';
+import { category as shopCategory } from '@/routes/shop';
 
 defineProps<{
     featuredProducts: ProductCardProduct[];
@@ -30,6 +31,8 @@ const instagramImages = [
             <img
                 :src="asset('stitch-hero.jpg')"
                 alt="Lette Little soft baby essentials"
+                width="444"
+                height="291"
                 fetchpriority="high"
                 decoding="async"
             />
@@ -53,14 +56,18 @@ const instagramImages = [
                     class="category-card"
                 >
                     <Link
-                        :href="shop.url({ query: { category: category.slug } })"
+                        :href="shopCategory.url(category.slug)"
                         class="category-image"
                     >
-                        <img :src="category.image" :alt="category.name" />
+                        <img
+                            :src="category.image"
+                            :alt="category.name"
+                            width="166"
+                            height="166"
+                        />
                     </Link>
                     <h3>{{ category.name }}</h3>
-                    <Link
-                        :href="shop.url({ query: { category: category.slug } })"
+                    <Link :href="shopCategory.url(category.slug)"
                         >DISCOVER</Link
                     >
                 </article>
@@ -99,6 +106,8 @@ const instagramImages = [
             <img
                 :src="asset('stitch-story.jpg')"
                 alt="Lette Little sketches and soft packaging"
+                width="433"
+                height="229"
             />
         </section>
 
@@ -118,6 +127,8 @@ const instagramImages = [
                     :key="`${image}-${index}`"
                     :src="image"
                     alt="Lette Little Instagram moment"
+                    width="166"
+                    height="166"
                     loading="lazy"
                 />
             </div>
@@ -470,6 +481,7 @@ const instagramImages = [
 .instagram-grid img {
     aspect-ratio: 1;
     width: 100%;
+    height: auto;
     object-fit: cover;
 }
 
