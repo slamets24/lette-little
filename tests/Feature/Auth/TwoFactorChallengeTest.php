@@ -44,6 +44,7 @@ class TwoFactorChallengeTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('auth/TwoFactorChallenge'),
-            );
+            )
+            ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
     }
 }
