@@ -15,8 +15,8 @@ import { request } from '@/routes/password';
 
 defineOptions({
     layout: {
-        title: 'Log in to your account',
-        description: 'Enter your email and password below to log in',
+        title: 'Customer & admin login',
+        description: 'Customers continue to orders. Admin team opens the dashboard.',
     },
 });
 

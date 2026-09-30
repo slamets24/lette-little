@@ -23,7 +23,7 @@ class User extends Authenticatable implements PasskeyUser
     /**
      * @var list<string>
      */
-    protected $fillable = ['name', 'email', 'password', 'is_admin'];
+    protected $fillable = ['name', 'email', 'email_verified_at', 'password', 'is_admin', 'is_super_admin'];
 
     /**
      * @return HasOne<Cart, $this>
@@ -41,6 +41,16 @@ class User extends Authenticatable implements PasskeyUser
         return $this->hasMany(Order::class);
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->is_admin || $this->is_super_admin;
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->is_super_admin;
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -52,6 +62,7 @@ class User extends Authenticatable implements PasskeyUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_super_admin' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
         ];
     }

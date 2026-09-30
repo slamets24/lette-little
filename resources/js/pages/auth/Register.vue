@@ -16,8 +16,8 @@ defineProps<{
 
 defineOptions({
     layout: {
-        title: 'Create an account',
-        description: 'Enter your details below to create your account',
+        title: 'Create customer account',
+        description: 'Signup is for customers. Admin accounts are created by superadmin.',
     },
 });
 </script>
@@ -97,7 +97,7 @@ defineOptions({
                 data-test="register-user-button"
             >
                 <Spinner v-if="processing" />
-                Create account
+                Create customer account
             </Button>
         </div>
 

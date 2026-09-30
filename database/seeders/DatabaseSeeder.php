@@ -19,10 +19,11 @@ class DatabaseSeeder extends Seeder
         User::query()->updateOrCreate(
             ['email' => 'test@example.com'],
             [
-                'name' => 'Test User',
+                'name' => 'Super Admin',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
                 'is_admin' => true,
+                'is_super_admin' => true,
             ],
         );
 

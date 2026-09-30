@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { home } from '@/routes';
+
+const logoSrc = '/images/lette/LOGO/Artboard%201.png';
 
 defineProps<{
     title?: string;
@@ -11,26 +12,26 @@ defineProps<{
 
 <template>
     <div
-        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10"
+        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-[var(--lette-canvas)] p-6 md:p-10 dark:bg-background"
     >
         <div class="w-full max-w-sm">
             <div class="flex flex-col gap-8">
                 <div class="flex flex-col items-center gap-4">
                     <Link
                         :href="home()"
-                        class="flex flex-col items-center gap-2 font-medium"
+                        class="flex flex-col items-center gap-3 font-medium"
                     >
-                        <div
-                            class="mb-1 flex h-9 w-9 items-center justify-center rounded-md"
-                        >
-                            <AppLogoIcon
-                                class="size-9 fill-current text-[var(--foreground)] dark:text-white"
-                            />
-                        </div>
-                        <span class="sr-only">{{ title }}</span>
+                        <img
+                            :src="logoSrc"
+                            alt="Lette Little"
+                            class="h-auto max-h-20 w-44 object-contain"
+                        />
+                        <span class="sr-only">Lette Little</span>
                     </Link>
                     <div class="space-y-2 text-center">
-                        <h1 class="text-xl font-medium">{{ title }}</h1>
+                        <h1 class="text-xl font-medium tracking-normal text-foreground">
+                            {{ title }}
+                        </h1>
                         <p class="text-center text-sm text-muted-foreground">
                             {{ description }}
                         </p>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsSuperAdmin;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: ['payments/midtrans/webhook']);
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
+            'superadmin' => EnsureUserIsSuperAdmin::class,
         ]);
 
         $middleware->web(append: [

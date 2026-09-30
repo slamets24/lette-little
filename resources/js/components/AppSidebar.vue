@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { ClipboardList, LayoutGrid, Package } from '@lucide/vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { ClipboardList, LayoutGrid, Package, UsersRound } from '@lucide/vue';
+import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -16,25 +17,40 @@ import {
 import { dashboard } from '@/routes';
 import { index as ordersIndex } from '@/routes/admin/orders';
 import { index as productsIndex } from '@/routes/admin/products';
+import { index as usersIndex } from '@/routes/admin/users';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Orders',
-        href: ordersIndex(),
-        icon: ClipboardList,
-    },
-    {
-        title: 'Products',
-        href: productsIndex(),
-        icon: Package,
-    },
-];
+const page = usePage();
+
+const mainNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Dashboard',
+            href: dashboard(),
+            icon: LayoutGrid,
+        },
+        {
+            title: 'Orders',
+            href: ordersIndex(),
+            icon: ClipboardList,
+        },
+        {
+            title: 'Products',
+            href: productsIndex(),
+            icon: Package,
+        },
+    ];
+
+    if (page.props.auth?.user?.is_super_admin) {
+        items.push({
+            title: 'Admin Users',
+            href: usersIndex(),
+            icon: UsersRound,
+        });
+    }
+
+    return items;
+});
 </script>
 
 <template>
