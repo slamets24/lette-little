@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
 import { journalArticles } from '@/data/lette';
 </script>
@@ -22,7 +22,7 @@ import { journalArticles } from '@/data/lette';
                     <time>{{ article.date }}</time>
                     <h2>{{ article.title }}</h2>
                     <p>{{ article.excerpt }}</p>
-                    <Link href="/journal">READ MORE</Link>
+                    <span>Coming soon</span>
                 </div>
             </article>
         </section>
@@ -44,7 +44,7 @@ import { journalArticles } from '@/data/lette';
 }
 
 .journal-hero p {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -53,8 +53,8 @@ import { journalArticles } from '@/data/lette';
 .journal-hero h1 {
     max-width: 780px;
     margin-top: 18px;
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: clamp(36px, 5vw, 62px);
     font-weight: 400;
     line-height: 1.16;
@@ -68,7 +68,7 @@ import { journalArticles } from '@/data/lette';
 }
 
 .journal-grid article {
-    background: #f6f3ed;
+    background: var(--lette-sand);
 }
 
 .journal-grid img {
@@ -83,7 +83,7 @@ import { journalArticles } from '@/data/lette';
 }
 
 time {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.14em;
@@ -91,8 +91,8 @@ time {
 
 h2 {
     margin-top: 12px;
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: 24px;
     font-weight: 400;
     line-height: 1.25;
@@ -100,16 +100,15 @@ h2 {
 
 p {
     margin-top: 14px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 13px;
     line-height: 1.8;
 }
 
-a {
+span {
     width: fit-content;
     margin-top: 22px;
-    border-bottom: 1px solid #6c5b4e;
-    color: #4e453f;
+    color: var(--lette-muted);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.14em;

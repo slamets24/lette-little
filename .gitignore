@@ -60,3 +60,11 @@ yarn-error.log
 .cursor
 .kiro
 .playwright-mcp
+
+# Local SEO audit output (generated reports, not source).
+/lette-little-audit/
+/*-audit/
+
+# Unused design-source artboards. Artboard 1 is still used by the auth layout.
+/public/images/lette/LOGO/Artboard 2.png
+/public/images/lette/LOGO/Artboard 3.png

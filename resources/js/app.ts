@@ -6,30 +6,26 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-const storefrontPages = [
-    'Welcome',
-    'Shop',
-    'Product',
-    'Cart',
-    'Checkout',
-    'OrderConfirmation',
-    'Collection',
-    'About',
-    'Journal',
-];
+
+/**
+ * Pages that live inside the admin app shell. Everything else is a storefront
+ * page and brings its own StorefrontLayout, so new storefront pages do not
+ * have to be registered here.
+ */
+const appShellPages = ['Dashboard'];
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
-            case storefrontPages.includes(name):
-                return null;
             case name.startsWith('auth/'):
                 return AuthLayout;
             case name.startsWith('settings/'):
                 return [AppLayout, SettingsLayout];
-            default:
+            case name.startsWith('admin/') || appShellPages.includes(name):
                 return AppLayout;
+            default:
+                return null;
         }
     },
     progress: {

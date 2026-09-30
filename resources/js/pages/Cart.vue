@@ -149,7 +149,7 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
 
 .cart-heading p,
 .summary-card p {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -158,8 +158,8 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
 
 .cart-heading h1,
 .empty-cart h2 {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-weight: 400;
 }
 
@@ -173,7 +173,7 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
 .summary-card small,
 .item-copy span,
 .item-copy small {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 13px;
     line-height: 1.75;
 }
@@ -199,15 +199,15 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
     grid-template-columns: 112px minmax(0, 1fr) auto auto 42px;
     gap: 18px;
     align-items: center;
-    border: 1px solid #e5ded6;
-    background: #fffdf8;
+    border: 1px solid var(--lette-line);
+    background: var(--lette-surface);
     padding: 14px;
 }
 
 .item-image {
     aspect-ratio: 1;
     overflow: hidden;
-    background: #f0eee8;
+    background: var(--lette-placeholder);
 }
 
 .item-image img {
@@ -223,15 +223,15 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
 
 .item-copy a {
     width: fit-content;
-    color: #4e453f;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-text);
+    font-family: var(--lette-heading-font);
     font-size: 18px;
 }
 
 .item-copy strong,
 .line-total,
 .summary-card strong {
-    color: #1c1c18;
+    color: var(--lette-ink);
     font-weight: 600;
 }
 
@@ -243,8 +243,8 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
     display: grid;
     grid-template-columns: 36px 42px 36px;
     min-height: 38px;
-    border: 1px solid #d1c4bc;
-    background: #fcf9f3;
+    border: 1px solid var(--lette-border);
+    background: var(--lette-canvas);
 }
 
 .quantity-control button,
@@ -252,11 +252,11 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
 .remove-button {
     display: grid;
     place-items: center;
-    color: #4e453f;
+    color: var(--lette-text);
 }
 
 .quantity-control span {
-    border-inline: 1px solid #e5ded6;
+    border-inline: 1px solid var(--lette-line);
     font-size: 13px;
     font-weight: 700;
 }
@@ -278,8 +278,8 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
 .remove-button {
     width: 42px;
     height: 42px;
-    border: 1px solid #e5ded6;
-    background: #fcf9f3;
+    border: 1px solid var(--lette-line);
+    background: var(--lette-canvas);
 }
 
 .summary-card {
@@ -287,8 +287,8 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
     top: 128px;
     display: grid;
     gap: 18px;
-    border: 1px solid #d1c4bc;
-    background: #f6f3ed;
+    border: 1px solid var(--lette-border);
+    background: var(--lette-sand);
     padding: 24px;
 }
 
@@ -296,10 +296,10 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
     display: flex;
     justify-content: space-between;
     gap: 16px;
-    border-top: 1px solid #e5ded6;
-    border-bottom: 1px solid #e5ded6;
+    border-top: 1px solid var(--lette-line);
+    border-bottom: 1px solid var(--lette-line);
     padding: 16px 0;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 14px;
 }
 
@@ -307,46 +307,46 @@ const { updateQuantity, removeItem, formatMoney } = useCart();
 .summary-card a,
 .empty-cart a {
     display: inline-flex;
-    min-height: 48px;
+    min-height: var(--lette-cta-height);
     align-items: center;
     justify-content: center;
-    border: 1px solid #6c5b4e;
-    padding: 0 18px;
-    font-size: 11px;
+    border: 1px solid var(--lette-brand);
+    padding: 0 var(--lette-cta-padding);
+    font-size: var(--lette-cta-size);
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--lette-cta-tracking);
     text-transform: uppercase;
 }
 
 .summary-card button,
 .summary-card a.checkout-link,
 .empty-cart a {
-    background: #6c5b4e;
-    color: #fffdf8;
+    background: var(--lette-brand);
+    color: var(--lette-surface);
 }
 
 .summary-card a {
-    background: #fffdf8;
-    color: #4e453f;
+    background: var(--lette-surface);
+    color: var(--lette-text);
 }
 
 .summary-card a.checkout-link {
-    color: #fffdf8;
+    color: var(--lette-surface);
 }
 
 .empty-cart {
     gap: 14px;
     max-width: 440px;
     margin: 0 auto;
-    border: 1px solid #e5ded6;
-    background: #fffdf8;
+    border: 1px solid var(--lette-line);
+    background: var(--lette-surface);
     padding: 54px 24px;
 }
 
 .empty-cart svg {
     width: 32px;
     height: 32px;
-    color: #6c5b4e;
+    color: var(--lette-brand);
 }
 
 .empty-cart h2 {

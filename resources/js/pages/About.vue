@@ -61,7 +61,7 @@ import { asset, benefits } from '@/data/lette';
 }
 
 .about-hero p {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -69,8 +69,8 @@ import { asset, benefits } from '@/data/lette';
 
 .about-hero h1,
 .principles h2 {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: clamp(36px, 5vw, 62px);
     font-weight: 400;
     line-height: 1.16;
@@ -82,20 +82,25 @@ import { asset, benefits } from '@/data/lette';
 
 .about-hero span {
     margin-top: 22px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 14px;
     line-height: 1.9;
 }
 
 .about-hero a {
-    min-height: 42px;
+    display: inline-flex;
+    min-height: var(--lette-cta-height);
+    align-items: center;
+    justify-content: center;
     margin-top: 30px;
-    border: 1px solid #d1c4bc;
-    padding: 0 22px;
-    color: #4e453f;
-    font-size: 10px;
+    border: 1px solid var(--lette-border);
+    background: var(--lette-surface);
+    padding: 0 var(--lette-cta-padding);
+    color: var(--lette-text);
+    font-size: var(--lette-cta-size);
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--lette-cta-tracking);
+    text-transform: uppercase;
 }
 
 .about-hero img {
@@ -107,7 +112,7 @@ import { asset, benefits } from '@/data/lette';
 .principles {
     display: grid;
     justify-items: center;
-    border-top: 1px solid #e5ded6;
+    border-top: 1px solid var(--lette-line);
     padding: 58px 0 78px;
     text-align: center;
 }
@@ -115,7 +120,7 @@ import { asset, benefits } from '@/data/lette';
 .principles > svg {
     width: 38px;
     height: 26px;
-    color: #6c5b4e;
+    color: var(--lette-brand);
     stroke-width: 1.2;
 }
 
@@ -133,20 +138,20 @@ import { asset, benefits } from '@/data/lette';
 }
 
 .principles article {
-    background: #f6f3ed;
+    background: var(--lette-sand);
     padding: 28px 22px;
 }
 
 .principles h3 {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: 18px;
     font-weight: 400;
 }
 
 .principles p {
     margin-top: 10px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 12px;
     line-height: 1.7;
 }

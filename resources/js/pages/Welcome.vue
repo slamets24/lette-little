@@ -2,8 +2,14 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { Cloud, Gift, Heart, Leaf, Package } from '@lucide/vue';
 import ProductCard from '@/components/lette/ProductCard.vue';
+import type { ProductCardProduct } from '@/components/lette/ProductCard.vue';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
-import { asset, benefits, categories, products } from '@/data/lette';
+import { asset, benefits, categories } from '@/data/lette';
+import { shop } from '@/routes';
+
+defineProps<{
+    featuredProducts: ProductCardProduct[];
+}>();
 
 const benefitIcons = [Leaf, Cloud, Heart, Gift];
 const instagramImages = [
@@ -18,18 +24,20 @@ const instagramImages = [
 
 <template>
     <StorefrontLayout active="home">
-        <Head title="Lette Little" />
+        <Head />
 
         <section class="home-hero">
             <img
                 :src="asset('stitch-hero.jpg')"
                 alt="Lette Little soft baby essentials"
+                fetchpriority="high"
+                decoding="async"
             />
             <div class="hero-content">
                 <p>Lette Little</p>
                 <h1>Made Light.<br />Made Gentle.</h1>
                 <span>Soft essentials for little beginnings.</span>
-                <Link href="/shop">SHOP COLLECTION</Link>
+                <Link :href="shop.url()">SHOP COLLECTION</Link>
             </div>
         </section>
 
@@ -44,25 +52,36 @@ const instagramImages = [
                     :key="category.slug"
                     class="category-card"
                 >
-                    <Link href="/collection" class="category-image">
+                    <Link
+                        :href="shop.url({ query: { category: category.slug } })"
+                        class="category-image"
+                    >
                         <img :src="category.image" :alt="category.name" />
                     </Link>
                     <h3>{{ category.name }}</h3>
-                    <Link href="/collection">DISCOVER</Link>
+                    <Link
+                        :href="shop.url({ query: { category: category.slug } })"
+                        >DISCOVER</Link
+                    >
                 </article>
             </div>
         </section>
 
         <section class="section-shell best-seller-section">
             <h2>Best Sellers</h2>
-            <div class="product-grid">
+            <div v-if="featuredProducts.length" class="product-grid">
                 <ProductCard
-                    v-for="product in products"
+                    v-for="product in featuredProducts"
                     :key="product.name"
                     :product="product"
                 />
             </div>
-            <Link class="outline-link" href="/shop">VIEW ALL PRODUCTS</Link>
+            <p v-else class="empty-featured">
+                Featured pieces will appear here when they are published.
+            </p>
+            <Link class="outline-link" :href="shop.url()"
+                >VIEW ALL PRODUCTS</Link
+            >
         </section>
 
         <section class="story-band">
@@ -159,7 +178,7 @@ const instagramImages = [
 .hero-content h1 {
     max-width: 560px;
     color: #fffaf1;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--lette-heading-font);
     font-size: clamp(42px, 5vw, 72px);
     font-weight: 400;
     line-height: 1.14;
@@ -175,14 +194,17 @@ const instagramImages = [
 .outline-link {
     display: inline-flex;
     width: fit-content;
+    min-height: var(--lette-cta-height);
     align-items: center;
     justify-content: center;
     border: 1px solid rgba(108, 91, 78, 0.34);
-    background: #fffdf8;
-    color: #4e453f;
-    font-size: 10px;
+    background: var(--lette-surface);
+    color: var(--lette-text);
+    padding: 0 var(--lette-cta-padding);
+    font-size: var(--lette-cta-size);
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--lette-cta-tracking);
+    text-transform: uppercase;
     transition:
         background 180ms ease,
         border-color 180ms ease,
@@ -191,15 +213,14 @@ const instagramImages = [
 
 .hero-content a {
     margin-top: 32px;
-    min-width: 164px;
-    min-height: 45px;
+    min-width: 200px;
 }
 
 .hero-content a:hover,
 .story-copy a:hover,
 .outline-link:hover {
-    border-color: #6c5b4e;
-    background: #f6f3ed;
+    border-color: var(--lette-brand);
+    background: var(--lette-sand);
     transform: translateY(-1px);
 }
 
@@ -217,7 +238,7 @@ const instagramImages = [
     justify-items: center;
     gap: 6px;
     margin-bottom: 26px;
-    color: #6c5b4e;
+    color: var(--lette-brand);
     text-align: center;
 }
 
@@ -230,8 +251,8 @@ const instagramImages = [
 .section-title h2,
 .best-seller-section h2,
 .instagram-section h2 {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: clamp(24px, 2.35vw, 32px);
     font-weight: 400;
     line-height: 1.25;
@@ -255,7 +276,7 @@ const instagramImages = [
     aspect-ratio: 1;
     width: 100%;
     overflow: hidden;
-    background: #f0eee8;
+    background: var(--lette-placeholder);
 }
 
 .category-image img {
@@ -271,16 +292,21 @@ const instagramImages = [
 
 .category-card h3 {
     margin-top: 13px;
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: 17px;
     font-weight: 400;
 }
 
 .category-card > a:last-child,
 .instagram-section > a {
+    display: inline-flex;
+    min-height: 32px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     margin-top: 3px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -291,7 +317,7 @@ const instagramImages = [
     width: 35px;
     height: 1px;
     margin: 7px auto 0;
-    background: #6c5b4e;
+    background: var(--lette-brand);
     content: '';
 }
 
@@ -309,9 +335,15 @@ const instagramImages = [
     margin-top: 24px;
 }
 
+.empty-featured {
+    margin-top: 24px;
+    color: var(--lette-muted);
+    font-size: 14px;
+    text-align: center;
+}
+
 .outline-link {
-    min-width: 198px;
-    min-height: 42px;
+    min-width: 200px;
     margin-top: 34px;
 }
 
@@ -331,7 +363,7 @@ const instagramImages = [
 }
 
 .story-copy > p {
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -339,8 +371,8 @@ const instagramImages = [
 
 .story-copy h2 {
     margin-top: 20px;
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: clamp(28px, 3vw, 40px);
     font-weight: 400;
     line-height: 1.22;
@@ -359,14 +391,13 @@ const instagramImages = [
 .story-copy span {
     max-width: 330px;
     margin-top: 22px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 13px;
     line-height: 1.9;
 }
 
 .story-copy a {
-    min-width: 136px;
-    min-height: 42px;
+    min-width: 160px;
     margin-top: 28px;
     background: transparent;
 }
@@ -381,8 +412,8 @@ const instagramImages = [
 .benefit-strip {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    border-bottom: 1px solid #e5ded6;
-    background: #fcf9f3;
+    border-bottom: 1px solid var(--lette-line);
+    background: var(--lette-canvas);
 }
 
 .benefit-strip article {
@@ -390,7 +421,7 @@ const instagramImages = [
     justify-items: center;
     min-height: 165px;
     align-content: center;
-    border-right: 1px solid #e5ded6;
+    border-right: 1px solid var(--lette-line);
     padding: 24px;
     text-align: center;
 }
@@ -403,13 +434,13 @@ const instagramImages = [
     width: 30px;
     height: 30px;
     margin-bottom: 11px;
-    color: #6c5b4e;
+    color: var(--lette-brand);
     stroke-width: 1.2;
 }
 
 .benefit-strip h3 {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: 15px;
     font-weight: 400;
 }
@@ -417,7 +448,7 @@ const instagramImages = [
 .benefit-strip p {
     max-width: 170px;
     margin-top: 5px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 12px;
     line-height: 1.55;
 }
@@ -452,6 +483,15 @@ const instagramImages = [
         width: min(100% - 32px, 1220px);
     }
 
+    /* Keep the subject in frame instead of cropping it off the top. */
+    .home-hero {
+        min-height: 400px;
+    }
+
+    .home-hero img {
+        object-position: 68% 25%;
+    }
+
     .category-grid,
     .benefit-strip {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -475,7 +515,7 @@ const instagramImages = [
     }
 
     .benefit-strip article:nth-child(-n + 2) {
-        border-bottom: 1px solid #e5ded6;
+        border-bottom: 1px solid var(--lette-line);
     }
 }
 
@@ -521,7 +561,7 @@ const instagramImages = [
     }
 
     .benefit-strip article:not(:last-child) {
-        border-bottom: 1px solid #e5ded6;
+        border-bottom: 1px solid var(--lette-line);
     }
 }
 </style>

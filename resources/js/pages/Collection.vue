@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
 import { categories } from '@/data/lette';
+import { shop } from '@/routes';
 </script>
 
 <template>
@@ -23,7 +24,8 @@ import { categories } from '@/data/lette';
                 <div>
                     <span>{{ category.name }}</span>
                     <p>{{ category.intro }}</p>
-                    <Link href="/shop"
+                    <Link
+                        :href="shop.url({ query: { category: category.slug } })"
                         >SHOP {{ category.name.toUpperCase() }}</Link
                     >
                 </div>
@@ -47,7 +49,7 @@ import { categories } from '@/data/lette';
 }
 
 .collection-hero p {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -56,8 +58,8 @@ import { categories } from '@/data/lette';
 .collection-hero h1 {
     max-width: 780px;
     margin-top: 18px;
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: clamp(36px, 5vw, 62px);
     font-weight: 400;
     line-height: 1.16;
@@ -74,7 +76,7 @@ import { categories } from '@/data/lette';
     display: grid;
     grid-template-columns: minmax(170px, 42%) 1fr;
     min-height: 290px;
-    background: #f6f3ed;
+    background: var(--lette-sand);
 }
 
 .collection-card img {
@@ -90,15 +92,15 @@ import { categories } from '@/data/lette';
 }
 
 .collection-card span {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: 30px;
     font-weight: 400;
 }
 
 .collection-card p {
     margin-top: 14px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 13px;
     line-height: 1.8;
 }
@@ -106,8 +108,8 @@ import { categories } from '@/data/lette';
 .collection-card a {
     width: fit-content;
     margin-top: 24px;
-    border-bottom: 1px solid #6c5b4e;
-    color: #4e453f;
+    border-bottom: 1px solid var(--lette-brand);
+    color: var(--lette-text);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.14em;
