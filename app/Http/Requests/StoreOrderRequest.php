@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\PaymentProvider;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -32,6 +34,7 @@ class StoreOrderRequest extends FormRequest
             'postal_code' => ['required', 'string', 'max:16'],
             'country' => ['required', 'string', 'size:2'],
             'notes' => ['nullable', 'string', 'max:500'],
+            'payment_method' => ['required', Rule::enum(PaymentProvider::class)],
         ];
     }
 }

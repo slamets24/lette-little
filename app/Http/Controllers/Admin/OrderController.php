@@ -64,7 +64,14 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
 
-        $fulfillment->transition($order, OrderStatus::from($validated['status']));
+        $fulfillment->transition(
+            $order,
+            OrderStatus::from($validated['status']),
+            [
+                'courier' => $validated['courier'] ?? null,
+                'tracking_number' => $validated['tracking_number'] ?? null,
+            ],
+        );
 
         return redirect()
             ->route('admin.orders.show', $order)
@@ -210,6 +217,8 @@ class OrderController extends Controller
             'shipping_cost' => $order->shipping_cost,
             'total' => $order->total,
             'notes' => $order->notes,
+            'courier' => $order->courier,
+            'tracking_number' => $order->tracking_number,
             'payment' => $order->payment ? [
                 'provider' => $order->payment->provider,
                 'status' => $order->payment->status->value,

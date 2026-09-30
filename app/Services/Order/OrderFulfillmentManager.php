@@ -13,6 +13,8 @@ use Illuminate\Validation\ValidationException;
 
 class OrderFulfillmentManager
 {
+    public function __construct(private readonly OrderMailer $orderMailer) {}
+
     /**
      * @return list<array{label: string, value: string}>
      */
@@ -20,16 +22,18 @@ class OrderFulfillmentManager
     {
         return collect($this->targetsFor($order->status))
             ->map(fn (OrderStatus $status): array => [
-                'label' => str($status->value)->replace('_', ' ')->title()->toString(),
+                'label' => $status === OrderStatus::Paid
+                    ? 'Mark as paid'
+                    : str($status->value)->replace('_', ' ')->title()->toString(),
                 'value' => $status->value,
             ])
             ->values()
             ->all();
     }
 
-    public function transition(Order $order, OrderStatus $targetStatus): Order
+    public function transition(Order $order, OrderStatus $targetStatus, array $tracking = []): Order
     {
-        return DB::transaction(function () use ($order, $targetStatus): Order {
+        return DB::transaction(function () use ($order, $targetStatus, $tracking): Order {
             $lockedOrder = Order::query()
                 ->whereKey($order->id)
                 ->lockForUpdate()
@@ -48,7 +52,21 @@ class OrderFulfillmentManager
                 ]);
             }
 
-            $lockedOrder->forceFill(['status' => $targetStatus])->save();
+            $attributes = ['status' => $targetStatus];
+
+            if ($targetStatus === OrderStatus::Shipped) {
+                $attributes['courier'] = $tracking['courier'] ?? $lockedOrder->courier;
+                $attributes['tracking_number'] = $tracking['tracking_number'] ?? $lockedOrder->tracking_number;
+            }
+
+            $lockedOrder->forceFill($attributes)->save();
+
+            if ($targetStatus === OrderStatus::Paid) {
+                $lockedOrder->payment()->where('status', PaymentStatus::Pending)->update([
+                    'status' => PaymentStatus::Completed,
+                    'settled_at' => now(),
+                ]);
+            }
 
             if ($targetStatus === OrderStatus::Cancelled) {
                 $lockedOrder->payment()->where('status', PaymentStatus::Pending)->update([
@@ -58,7 +76,19 @@ class OrderFulfillmentManager
                 $this->releaseStockOnce($lockedOrder);
             }
 
-            return $lockedOrder->fresh(['customer', 'address', 'items', 'payment']);
+            $freshOrder = $lockedOrder->fresh(['customer', 'address', 'items', 'payment']);
+
+            DB::afterCommit(function () use ($freshOrder, $targetStatus): void {
+                if ($targetStatus === OrderStatus::Paid) {
+                    $this->orderMailer->paid($freshOrder);
+                }
+
+                if ($targetStatus === OrderStatus::Shipped) {
+                    $this->orderMailer->shipped($freshOrder);
+                }
+            });
+
+            return $freshOrder;
         }, attempts: 3);
     }
 
@@ -107,7 +137,7 @@ class OrderFulfillmentManager
     private function targetsFor(OrderStatus $status): array
     {
         return match ($status) {
-            OrderStatus::PendingPayment => [OrderStatus::Cancelled],
+            OrderStatus::PendingPayment => [OrderStatus::Paid, OrderStatus::Cancelled],
             OrderStatus::Paid => [OrderStatus::Packed],
             OrderStatus::Packed => [OrderStatus::Shipped],
             OrderStatus::Shipped => [OrderStatus::Completed],

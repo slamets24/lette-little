@@ -16,7 +16,7 @@ class Order extends Model
     /**
      * @var list<string>
      */
-    protected $fillable = ['order_number', 'user_id', 'customer_id', 'address_id', 'subtotal', 'shipping_cost', 'total', 'notes', 'status'];
+    protected $fillable = ['order_number', 'user_id', 'customer_id', 'address_id', 'subtotal', 'shipping_cost', 'total', 'notes', 'courier', 'tracking_number', 'status'];
 
     /**
      * @return BelongsTo<User, $this>

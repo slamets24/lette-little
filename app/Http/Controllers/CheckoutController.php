@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PaymentProvider;
 use App\Enums\PaymentStatus;
 use App\Http\Requests\StoreOrderRequest;
 use App\Services\Cart\CartManager;
+use App\Services\Order\OrderMailer;
 use App\Services\Order\OrderManager;
 use App\Services\Payment\MidtransService;
+use App\Services\Seo\PageMeta;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -35,19 +38,36 @@ class CheckoutController extends Controller
         return Inertia::render('Checkout', [
             'cart' => $cartPayload,
             'cartAdjustments' => $adjustments,
+            'bankTransfer' => [
+                'bank' => config('services.bank_transfer.bank') ?: null,
+                'account_name' => config('services.bank_transfer.account_name') ?: null,
+                'account_number' => config('services.bank_transfer.account_number') ?: null,
+            ],
+            'meta' => PageMeta::make(
+                title: 'Checkout',
+                description: 'Confirm your contact, delivery, and payment details to place your Lette Little order.',
+                noindex: true,
+            ),
         ]);
     }
 
     /**
      * Create an order from the current cart.
      */
-    public function store(StoreOrderRequest $request, OrderManager $orderManager, MidtransService $midtransService): RedirectResponse|SymfonyResponse
+    public function store(StoreOrderRequest $request, OrderManager $orderManager, MidtransService $midtransService, OrderMailer $orderMailer): RedirectResponse|SymfonyResponse
     {
         $order = $orderManager->checkout($request, $request->validated());
         $completedOrderIds = $request->session()->get('completed_order_ids', []);
         $completedOrderIds[] = $order->id;
 
         $request->session()->put('completed_order_ids', array_values(array_unique($completedOrderIds)));
+        $orderMailer->placed($order);
+
+        $paymentMethod = PaymentProvider::from($request->validated('payment_method'));
+
+        if ($paymentMethod === PaymentProvider::BankTransfer) {
+            return redirect()->route('orders.show', $order);
+        }
 
         try {
             $snap = $midtransService->createSnapToken($order);

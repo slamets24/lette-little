@@ -41,4 +41,10 @@ return [
         'is_production' => env('MIDTRANS_IS_PRODUCTION', false),
     ],
 
+    'bank_transfer' => [
+        'bank' => env('BANK_TRANSFER_BANK'),
+        'account_name' => env('BANK_TRANSFER_ACCOUNT_NAME'),
+        'account_number' => env('BANK_TRANSFER_ACCOUNT_NUMBER'),
+    ],
+
 ];

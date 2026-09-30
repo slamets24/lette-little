@@ -7,6 +7,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Services\Order\OrderFulfillmentManager;
+use App\Services\Order\OrderMailer;
 use App\Services\Payment\MidtransService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class MidtransWebhookController extends Controller
     /**
      * Handle Midtrans payment notifications.
      */
-    public function __invoke(Request $request, MidtransService $midtransService, OrderFulfillmentManager $fulfillment): JsonResponse
+    public function __invoke(Request $request, MidtransService $midtransService, OrderFulfillmentManager $fulfillment, OrderMailer $orderMailer): JsonResponse
     {
         $data = $request->validate([
             'order_id' => ['required', 'string'],
@@ -64,7 +65,9 @@ class MidtransWebhookController extends Controller
             return response()->json(['message' => 'Gross amount does not match.'], 422);
         }
 
-        DB::transaction(function () use ($order, $data, $request, $fulfillment): void {
+        $notifyPaid = false;
+
+        DB::transaction(function () use ($order, $data, $request, $fulfillment, &$notifyPaid): void {
             $order = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
             $payment = Payment::query()->where('order_id', $order->id)->lockForUpdate()->firstOrFail();
             $status = $data['transaction_status'];
@@ -87,6 +90,7 @@ class MidtransWebhookController extends Controller
                 ])->save();
 
                 $order->forceFill(['status' => OrderStatus::Paid])->save();
+                $notifyPaid = true;
 
                 return;
             }
@@ -126,6 +130,10 @@ class MidtransWebhookController extends Controller
 
             $payment->save();
         });
+
+        if ($notifyPaid) {
+            $orderMailer->paid($order->fresh(['customer']));
+        }
 
         return response()->json(['message' => 'Webhook handled.']);
     }

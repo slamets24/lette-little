@@ -9,6 +9,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { index, update } from '@/routes/admin/orders';
 import type { AdminOrderDetail, OrderFilters, OrderStatus, OrderTransition, PaymentStatus } from '@/types/admin/order';
 
@@ -20,8 +22,12 @@ const props = defineProps<{
 
 const form = useForm<{
     status: OrderStatus | '';
+    courier: string;
+    tracking_number: string;
 }>({
     status: '',
+    courier: props.order.courier ?? '',
+    tracking_number: props.order.tracking_number ?? '',
 });
 
 const moneyFormatter = new Intl.NumberFormat('id-ID', {
@@ -225,6 +231,33 @@ defineOptions({
                             <Badge :variant="orderBadgeVariant(order.status)">
                                 {{ readableStatus(order.status) }}
                             </Badge>
+                        </div>
+                        <div class="grid gap-3">
+                            <div class="grid gap-1.5">
+                                <Label for="courier">Courier</Label>
+                                <Input
+                                    id="courier"
+                                    v-model="form.courier"
+                                    placeholder="JNE, SiCepat, J&T"
+                                />
+                                <p v-if="form.errors.courier" class="text-sm font-medium text-destructive">
+                                    {{ form.errors.courier }}
+                                </p>
+                            </div>
+                            <div class="grid gap-1.5">
+                                <Label for="tracking_number">Tracking number</Label>
+                                <Input
+                                    id="tracking_number"
+                                    v-model="form.tracking_number"
+                                    placeholder="Resi"
+                                />
+                                <p v-if="form.errors.tracking_number" class="text-sm font-medium text-destructive">
+                                    {{ form.errors.tracking_number }}
+                                </p>
+                            </div>
+                            <p class="text-xs text-muted-foreground">
+                                Required when marking the order as shipped.
+                            </p>
                         </div>
                         <div v-if="availableTransitions.length > 0" class="grid gap-2">
                             <Button

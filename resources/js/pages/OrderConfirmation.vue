@@ -25,6 +25,8 @@ type Order = {
     total: number;
     notes: string | null;
     created_at: string | null;
+    courier: string | null;
+    tracking_number: string | null;
     customer: {
         id: number;
         name: string;
@@ -46,6 +48,11 @@ type Order = {
         status: string | null;
         amount: number | null;
         snap_url: string | null;
+        bank_transfer: {
+            bank: string | null;
+            account_name: string | null;
+            account_number: string | null;
+        } | null;
     };
 };
 
@@ -83,19 +90,35 @@ const addressLines = [
                 <CheckCircle2 />
                 <p>ORDER RECEIVED</p>
                 <h1>Thank you, {{ order.customer.name }}.</h1>
-                <span v-if="order.payment.status === 'pending' && order.payment.snap_url">
-                    Your order {{ order.order_number }} has been created. Complete
-                    payment through the secure Midtrans page so we can prepare it
-                    for fulfilment.
+                <span
+                    v-if="
+                        order.payment.status === 'pending' &&
+                        order.payment.provider === 'bank_transfer'
+                    "
+                >
+                    Your order {{ order.order_number }} is reserved. Transfer
+                    the total to our bank account, then we will mark it paid
+                    after the funds arrive.
+                </span>
+                <span
+                    v-else-if="
+                        order.payment.status === 'pending' &&
+                        order.payment.snap_url
+                    "
+                >
+                    Your order {{ order.order_number }} has been created.
+                    Complete payment through the secure Midtrans page so we can
+                    prepare it for fulfilment.
                 </span>
                 <span v-else-if="order.payment.status === 'pending'">
-                    Your order {{ order.order_number }} has been created, but the
-                    payment page is temporarily unavailable. Contact us and we will
-                    help continue the payment manually.
+                    Your order {{ order.order_number }} has been created, but
+                    the payment page is temporarily unavailable. Contact us and
+                    we will help continue the payment manually.
                 </span>
                 <span v-else>
-                    Your order {{ order.order_number }} has been created. Shipping
-                    will be confirmed after we review your delivery details.
+                    Your order {{ order.order_number }} has been created.
+                    Shipping will be confirmed after we review your delivery
+                    details.
                 </span>
             </div>
 
@@ -113,11 +136,15 @@ const addressLines = [
                         <div class="status-grid">
                             <div>
                                 <span>Order Status</span>
-                                <strong>{{ readableStatus(order.status) }}</strong>
+                                <strong>{{
+                                    readableStatus(order.status)
+                                }}</strong>
                             </div>
                             <div>
                                 <span>Payment Status</span>
-                                <strong>{{ readableStatus(order.payment.status) }}</strong>
+                                <strong>{{
+                                    readableStatus(order.payment.status)
+                                }}</strong>
                             </div>
                         </div>
 
@@ -142,7 +169,18 @@ const addressLines = [
                             <Home />
                             <div>
                                 <p>Delivery Details</p>
-                                <span>We will confirm shipping before fulfilment.</span>
+                                <span
+                                    v-if="
+                                        order.courier && order.tracking_number
+                                    "
+                                >
+                                    {{ order.courier }} ·
+                                    {{ order.tracking_number }}
+                                </span>
+                                <span v-else
+                                    >Courier shipping will be quoted after this
+                                    order.</span
+                                >
                             </div>
                         </div>
 
@@ -167,6 +205,13 @@ const addressLines = [
                             </span>
                         </address>
 
+                        <p
+                            v-if="order.courier && order.tracking_number"
+                            class="order-notes"
+                        >
+                            Shipped with {{ order.courier }}. Tracking
+                            {{ order.tracking_number }}.
+                        </p>
                         <p v-if="order.notes" class="order-notes">
                             “{{ order.notes }}”
                         </p>
@@ -178,22 +223,59 @@ const addressLines = [
                     <p>Payment</p>
                     <h2>{{ formatMoney(order.total) }}</h2>
                     <span v-if="order.payment.status === 'completed'">
-                        Payment received through Midtrans. We will prepare the order
-                        and confirm shipping before fulfilment.
+                        Payment received. We will prepare the order and quote
+                        courier shipping before fulfilment.
                     </span>
                     <span v-else-if="order.payment.status === 'failed'">
-                        Payment was not completed. Please contact us if you still want
-                        to continue this order.
+                        Payment was not completed. Please contact us if you
+                        still want to continue this order.
+                    </span>
+                    <span
+                        v-else-if="order.payment.provider === 'bank_transfer'"
+                    >
+                        Transfer the order total to the account below, then wait
+                        for us to confirm the payment.
                     </span>
                     <span v-else-if="order.payment.snap_url">
-                        Complete your payment through the secure Midtrans page. If you
-                        already paid, this status will update after Midtrans confirms
-                        the payment.
+                        Complete your payment through the secure Midtrans page.
+                        If you already paid, this status will update after
+                        Midtrans confirms the payment.
                     </span>
                     <span v-else>
-                        The payment page is temporarily unavailable. Contact us and
-                        share your order number so we can help continue this order.
+                        The payment page is temporarily unavailable. Contact us
+                        and share your order number so we can help continue this
+                        order.
                     </span>
+
+                    <div
+                        v-if="
+                            order.payment.provider === 'bank_transfer' &&
+                            order.payment.bank_transfer
+                        "
+                        class="bank-details"
+                    >
+                        <div>
+                            <span>Bank</span>
+                            <strong>{{
+                                order.payment.bank_transfer.bank ||
+                                'Shared after order'
+                            }}</strong>
+                        </div>
+                        <div>
+                            <span>Account name</span>
+                            <strong>{{
+                                order.payment.bank_transfer.account_name ||
+                                'Lette Little'
+                            }}</strong>
+                        </div>
+                        <div>
+                            <span>Account number</span>
+                            <strong>{{
+                                order.payment.bank_transfer.account_number ||
+                                'Contact us for the number'
+                            }}</strong>
+                        </div>
+                    </div>
 
                     <div class="summary-row">
                         <span>Subtotal</span>
@@ -202,7 +284,11 @@ const addressLines = [
                     <div class="summary-row">
                         <span>Shipping</span>
                         <strong>
-                            {{ order.shipping_cost > 0 ? formatMoney(order.shipping_cost) : 'Confirmed later' }}
+                            {{
+                                order.shipping_cost > 0
+                                    ? formatMoney(order.shipping_cost)
+                                    : 'Quoted after order'
+                            }}
                         </strong>
                     </div>
                     <div class="summary-row total-row">
@@ -211,7 +297,10 @@ const addressLines = [
                     </div>
 
                     <a
-                        v-if="order.payment.status === 'pending' && order.payment.snap_url"
+                        v-if="
+                            order.payment.status === 'pending' &&
+                            order.payment.snap_url
+                        "
                         :href="order.payment.snap_url"
                         class="primary-link"
                     >
@@ -227,7 +316,9 @@ const addressLines = [
                     <Link v-else :href="shop.url()" class="primary-link">
                         Continue Shopping
                     </Link>
-                    <Link :href="home.url()" class="secondary-link">Back Home</Link>
+                    <Link :href="home.url()" class="secondary-link"
+                        >Back Home</Link
+                    >
                 </aside>
             </div>
         </section>
@@ -246,8 +337,8 @@ const addressLines = [
     justify-items: center;
     gap: 14px;
     margin-bottom: 30px;
-    border: 1px solid #d1c4bc;
-    background: #fffdf8;
+    border: 1px solid var(--lette-border);
+    background: var(--lette-surface);
     padding: 48px 24px;
     text-align: center;
 }
@@ -255,14 +346,14 @@ const addressLines = [
 .success-card > svg {
     width: 42px;
     height: 42px;
-    color: #5d6c4e;
+    color: var(--lette-success);
     stroke-width: 1.45;
 }
 
 .success-card p,
 .info-card p,
 .payment-card p {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -271,8 +362,8 @@ const addressLines = [
 
 .success-card h1,
 .payment-card h2 {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-weight: 400;
 }
 
@@ -290,7 +381,7 @@ const addressLines = [
 .summary-row,
 address,
 .order-notes {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 13px;
     line-height: 1.75;
 }
@@ -316,16 +407,37 @@ address,
 
 .info-card,
 .payment-card {
-    border: 1px solid #d1c4bc;
-    background: #fffdf8;
+    border: 1px solid var(--lette-border);
+    background: var(--lette-surface);
     padding: 24px;
+}
+
+.bank-details {
+    display: grid;
+    gap: 10px;
+    border: 1px solid var(--lette-line);
+    background: var(--lette-sand);
+    padding: 14px;
+}
+
+.bank-details span {
+    display: block;
+    color: var(--lette-muted);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.bank-details strong {
+    color: var(--lette-ink);
+    font-size: 14px;
 }
 
 .card-heading {
     display: flex;
     gap: 12px;
     align-items: flex-start;
-    border-bottom: 1px solid #e5ded6;
+    border-bottom: 1px solid var(--lette-line);
     padding-bottom: 16px;
 }
 
@@ -333,7 +445,7 @@ address,
 .payment-card > svg {
     width: 20px;
     height: 20px;
-    color: #6c5b4e;
+    color: var(--lette-brand);
     stroke-width: 1.5;
 }
 
@@ -348,8 +460,8 @@ address,
 .customer-grid div {
     display: grid;
     gap: 3px;
-    border: 1px solid #e5ded6;
-    background: #fcf9f3;
+    border: 1px solid var(--lette-line);
+    background: var(--lette-canvas);
     padding: 14px;
 }
 
@@ -357,12 +469,12 @@ address,
 .customer-grid strong,
 .item-list strong,
 .summary-row strong {
-    color: #1c1c18;
+    color: var(--lette-ink);
     font-weight: 600;
 }
 
 .item-list {
-    border-top: 1px solid #e5ded6;
+    border-top: 1px solid var(--lette-line);
     padding-top: 16px;
 }
 
@@ -378,7 +490,7 @@ address,
 }
 
 .item-list em {
-    color: #1c1c18;
+    color: var(--lette-ink);
     font-size: 13px;
     font-style: normal;
     font-weight: 600;
@@ -387,20 +499,20 @@ address,
 address {
     display: grid;
     gap: 2px;
-    border-top: 1px solid #e5ded6;
+    border-top: 1px solid var(--lette-line);
     padding-top: 16px;
     font-style: normal;
 }
 
 .order-notes {
-    border-left: 2px solid #d1c4bc;
+    border-left: 2px solid var(--lette-border);
     padding-left: 12px;
 }
 
 .payment-card {
     position: sticky;
     top: 128px;
-    background: #f6f3ed;
+    background: var(--lette-sand);
 }
 
 .payment-card > svg {
@@ -416,37 +528,37 @@ address {
     display: flex;
     justify-content: space-between;
     gap: 16px;
-    border-top: 1px solid #e5ded6;
+    border-top: 1px solid var(--lette-line);
     padding-top: 12px;
 }
 
 .total-row strong,
 .total-row span {
-    color: #1c1c18;
+    color: var(--lette-ink);
 }
 
 .primary-link,
 .secondary-link {
     display: inline-flex;
-    min-height: 48px;
+    min-height: var(--lette-cta-height);
     align-items: center;
     justify-content: center;
-    border: 1px solid #6c5b4e;
-    padding: 0 18px;
-    font-size: 11px;
+    border: 1px solid var(--lette-brand);
+    padding: 0 var(--lette-cta-padding);
+    font-size: var(--lette-cta-size);
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--lette-cta-tracking);
     text-transform: uppercase;
 }
 
 .primary-link {
-    background: #6c5b4e;
-    color: #fffdf8;
+    background: var(--lette-brand);
+    color: var(--lette-surface);
 }
 
 .secondary-link {
-    background: #fffdf8;
-    color: #4e453f;
+    background: var(--lette-surface);
+    color: var(--lette-text);
 }
 
 @media (max-width: 900px) {

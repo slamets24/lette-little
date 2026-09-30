@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\StockMovementType;
+use App\Mail\OrderPaidMail;
+use App\Mail\OrderShippedMail;
 use App\Models\Address;
 use App\Models\Customer;
 use App\Models\Order;
@@ -14,6 +16,7 @@ use App\Models\ProductVariant;
 use App\Models\User;
 use Database\Seeders\CatalogSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -170,6 +173,7 @@ class AdminOrderTest extends TestCase
 
     public function test_admin_can_progress_paid_order_through_fulfillment_steps(): void
     {
+        Mail::fake();
         $admin = User::factory()->admin()->create();
         $order = $this->createOrder(['status' => OrderStatus::Paid], [], PaymentStatus::Completed);
 
@@ -179,9 +183,17 @@ class AdminOrderTest extends TestCase
         $this->assertSame(OrderStatus::Packed, $order->fresh()->status);
 
         $this->actingAs($admin)
-            ->patch(route('admin.orders.update', $order), ['status' => OrderStatus::Shipped->value])
+            ->patch(route('admin.orders.update', $order), [
+                'status' => OrderStatus::Shipped->value,
+                'courier' => 'JNE',
+                'tracking_number' => 'JT1234567890',
+            ])
             ->assertRedirect(route('admin.orders.show', $order));
-        $this->assertSame(OrderStatus::Shipped, $order->fresh()->status);
+        $order->refresh();
+        $this->assertSame(OrderStatus::Shipped, $order->status);
+        $this->assertSame('JNE', $order->courier);
+        $this->assertSame('JT1234567890', $order->tracking_number);
+        Mail::assertQueued(OrderShippedMail::class);
 
         $this->actingAs($admin)
             ->patch(route('admin.orders.update', $order), ['status' => OrderStatus::Completed->value])
@@ -189,22 +201,51 @@ class AdminOrderTest extends TestCase
         $this->assertSame(OrderStatus::Completed, $order->fresh()->status);
     }
 
-    public function test_admin_cannot_skip_or_manually_mark_paid(): void
+    public function test_admin_can_mark_pending_payment_as_paid(): void
     {
+        Mail::fake();
         $admin = User::factory()->admin()->create();
         $pending = $this->createOrder(['status' => OrderStatus::PendingPayment], [], PaymentStatus::Pending);
+        $pending->payment()->update(['provider' => 'bank_transfer']);
+
+        $this->actingAs($admin)
+            ->patch(route('admin.orders.update', $pending), ['status' => OrderStatus::Paid->value])
+            ->assertRedirect(route('admin.orders.show', $pending));
+
+        $pending->refresh();
+        $payment = $pending->payment()->firstOrFail();
+
+        $this->assertSame(OrderStatus::Paid, $pending->status);
+        $this->assertSame(PaymentStatus::Completed, $payment->status);
+        $this->assertNotNull($payment->settled_at);
+        Mail::assertQueued(OrderPaidMail::class);
+    }
+
+    public function test_admin_cannot_ship_without_tracking_details(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $order = $this->createOrder(['status' => OrderStatus::Packed], [], PaymentStatus::Completed);
+
+        $this->actingAs($admin)
+            ->from(route('admin.orders.show', $order))
+            ->patch(route('admin.orders.update', $order), ['status' => OrderStatus::Shipped->value])
+            ->assertRedirect(route('admin.orders.show', $order))
+            ->assertSessionHasErrors(['courier', 'tracking_number']);
+        $this->assertSame(OrderStatus::Packed, $order->fresh()->status);
+    }
+
+    public function test_admin_cannot_skip_fulfillment_steps(): void
+    {
+        $admin = User::factory()->admin()->create();
         $paid = $this->createOrder(['status' => OrderStatus::Paid], ['email' => 'paid@example.com'], PaymentStatus::Completed);
 
         $this->actingAs($admin)
-            ->from(route('admin.orders.show', $pending))
-            ->patch(route('admin.orders.update', $pending), ['status' => OrderStatus::Paid->value])
-            ->assertRedirect(route('admin.orders.show', $pending))
-            ->assertSessionHasErrors('status');
-        $this->assertSame(OrderStatus::PendingPayment, $pending->fresh()->status);
-
-        $this->actingAs($admin)
             ->from(route('admin.orders.show', $paid))
-            ->patch(route('admin.orders.update', $paid), ['status' => OrderStatus::Shipped->value])
+            ->patch(route('admin.orders.update', $paid), [
+                'status' => OrderStatus::Shipped->value,
+                'courier' => 'JNE',
+                'tracking_number' => 'JT123',
+            ])
             ->assertRedirect(route('admin.orders.show', $paid))
             ->assertSessionHasErrors('status');
         $this->assertSame(OrderStatus::Paid, $paid->fresh()->status);
@@ -225,7 +266,11 @@ class AdminOrderTest extends TestCase
 
         $this->actingAs($admin)
             ->from(route('admin.orders.show', $completed))
-            ->patch(route('admin.orders.update', $completed), ['status' => OrderStatus::Shipped->value])
+            ->patch(route('admin.orders.update', $completed), [
+                'status' => OrderStatus::Shipped->value,
+                'courier' => 'JNE',
+                'tracking_number' => 'JT123',
+            ])
             ->assertRedirect(route('admin.orders.show', $completed))
             ->assertSessionHasErrors('status');
         $this->assertSame(OrderStatus::Completed, $completed->fresh()->status);

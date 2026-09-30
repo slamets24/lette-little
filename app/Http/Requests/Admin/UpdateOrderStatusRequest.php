@@ -25,6 +25,8 @@ class UpdateOrderStatusRequest extends FormRequest
     {
         return [
             'status' => ['required', Rule::enum(OrderStatus::class)],
+            'courier' => ['required_if:status,shipped', 'nullable', 'string', 'max:80'],
+            'tracking_number' => ['required_if:status,shipped', 'nullable', 'string', 'max:80'],
         ];
     }
 }

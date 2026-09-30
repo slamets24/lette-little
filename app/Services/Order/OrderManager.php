@@ -3,6 +3,7 @@
 namespace App\Services\Order;
 
 use App\Enums\OrderStatus;
+use App\Enums\PaymentProvider;
 use App\Enums\PaymentStatus;
 use App\Enums\StockMovementType;
 use App\Models\Address;
@@ -52,7 +53,7 @@ class OrderManager
             }
 
             $order->payment()->create([
-                'provider' => 'midtrans',
+                'provider' => PaymentProvider::from($data['payment_method'])->value,
                 'status' => PaymentStatus::Pending,
                 'amount' => $order->total,
             ]);
@@ -72,6 +73,7 @@ class OrderManager
 
         $paymentPayload = $order->payment?->raw_payload;
         $snapUrl = is_array($paymentPayload) ? ($paymentPayload['snap_url'] ?? null) : null;
+        $provider = $order->payment?->provider;
 
         return [
             'id' => $order->id,
@@ -82,6 +84,8 @@ class OrderManager
             'total' => $order->total,
             'notes' => $order->notes,
             'created_at' => $order->created_at?->toISOString(),
+            'courier' => $order->courier,
+            'tracking_number' => $order->tracking_number,
             'customer' => [
                 'id' => $order->customer->id,
                 'name' => $order->customer->name,
@@ -107,6 +111,43 @@ class OrderManager
                 'quantity' => $item->quantity,
                 'line_total' => $item->line_total,
             ])->values(),
+            'payment' => [
+                'provider' => $provider,
+                'status' => $order->payment?->status->value,
+                'amount' => $order->payment?->amount,
+                'snap_url' => $snapUrl,
+                'bank_transfer' => $provider === PaymentProvider::BankTransfer->value
+                    ? $this->bankTransferDetails()
+                    : null,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function presentSummary(Order $order): array
+    {
+        $order->loadMissing(['items', 'payment']);
+
+        $paymentPayload = $order->payment?->raw_payload;
+        $snapUrl = is_array($paymentPayload) ? ($paymentPayload['snap_url'] ?? null) : null;
+        $itemNames = $order->items
+            ->pluck('product_name')
+            ->unique()
+            ->take(2)
+            ->values();
+
+        return [
+            'id' => $order->id,
+            'order_number' => $order->order_number,
+            'status' => $order->status->value,
+            'subtotal' => $order->subtotal,
+            'shipping_cost' => $order->shipping_cost,
+            'total' => $order->total,
+            'created_at' => $order->created_at?->toISOString(),
+            'items_count' => $order->items->sum('quantity'),
+            'items_summary' => $itemNames->implode(', '),
             'payment' => [
                 'provider' => $order->payment?->provider,
                 'status' => $order->payment?->status->value,
@@ -219,5 +260,17 @@ class OrderManager
             'reference_id' => $order->id,
             'notes' => "Order {$order->order_number} item {$orderItem->id}",
         ]);
+    }
+
+    /**
+     * @return array{bank: string|null, account_name: string|null, account_number: string|null}
+     */
+    private function bankTransferDetails(): array
+    {
+        return [
+            'bank' => config('services.bank_transfer.bank') ?: null,
+            'account_name' => config('services.bank_transfer.account_name') ?: null,
+            'account_number' => config('services.bank_transfer.account_number') ?: null,
+        ];
     }
 }

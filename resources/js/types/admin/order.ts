@@ -38,6 +38,8 @@ export type AdminOrderDetail = AdminOrder & {
     shipping_cost: number;
     total: number;
     notes: string | null;
+    courier: string | null;
+    tracking_number: string | null;
     payment: {
         provider: string;
         status: PaymentStatus;

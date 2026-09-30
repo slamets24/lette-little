@@ -5,12 +5,14 @@ namespace Tests\Feature;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\StockMovementType;
+use App\Mail\OrderPaidMail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\ProductVariant;
 use Database\Seeders\CatalogSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class PaymentWebhookTest extends TestCase
@@ -30,6 +32,7 @@ class PaymentWebhookTest extends TestCase
 
     public function test_settlement_webhook_marks_payment_completed_and_order_paid(): void
     {
+        Mail::fake();
         $order = $this->createPendingOrder();
 
         $this->postJson(route('payments.midtrans.webhook'), $this->payload($order, 'settlement'))
@@ -44,6 +47,7 @@ class PaymentWebhookTest extends TestCase
         $this->assertNotNull($payment->settled_at);
         $this->assertSame('midtrans-transaction-123', $payment->external_reference);
         $this->assertSame('settlement', $payment->raw_payload['transaction_status']);
+        Mail::assertQueued(OrderPaidMail::class);
     }
 
     public function test_capture_webhook_with_accepted_fraud_status_marks_payment_completed(): void
