@@ -17,8 +17,11 @@ class PageMeta
     /**
      * Build the search engine and social metadata for a page.
      *
+     * When no canonical URL is given the page falls back to the current URL
+     * without its query string.
+     *
      * @param  array<string, mixed>|null  $jsonLd
-     * @return array{title: string, description: string, image: string, robots: string, json_ld: array<string, mixed>|null}
+     * @return array{title: string, description: string, image: string, robots: string, canonical: string|null, json_ld: array<string, mixed>|null}
      */
     public static function make(
         ?string $title = null,
@@ -26,6 +29,7 @@ class PageMeta
         ?string $image = null,
         bool $noindex = false,
         ?array $jsonLd = null,
+        ?string $canonical = null,
     ): array {
         $siteName = config('app.name');
 
@@ -34,6 +38,7 @@ class PageMeta
             'description' => self::trimDescription($description ?? self::DEFAULT_DESCRIPTION),
             'image' => url($image ?? self::DEFAULT_IMAGE),
             'robots' => $noindex ? 'noindex, nofollow' : 'index, follow',
+            'canonical' => $canonical,
             'json_ld' => $jsonLd,
         ];
     }

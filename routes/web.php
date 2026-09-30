@@ -10,12 +10,18 @@ use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\StorefrontPageController;
 use App\Services\Seo\PageMeta;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ShopController::class, 'home'])->name('home');
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/robots.txt', RobotsController::class)->name('robots');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+Route::get('/shop/category/{category:slug}', [ShopController::class, 'category'])->name('shop.category');
 Route::get('/shop/{product:slug}', [ShopController::class, 'show'])->name('shop.show');
 Route::get('/cart', [CartController::class, 'show'])->name('cart');
 Route::post('/cart/items', [CartItemController::class, 'store'])->name('cart.items.store');
@@ -28,14 +34,15 @@ Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.s
 Route::post('/payments/midtrans/webhook', MidtransWebhookController::class)->name('payments.midtrans.webhook');
 Route::get('/orders', [OrderController::class, 'index'])->middleware(['auth', 'verified'])->name('orders.index');
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::get('/collection', [StorefrontPageController::class, 'collection'])->name('collection');
+Route::get('/faq', [StorefrontPageController::class, 'faq'])->name('faq');
+
 $storefrontPages = [
-    ['/collection', 'Collection', 'collection', 'Collection', 'Meet the Cloud Beginning collection: dresses, rompers, sets, and sleepwear built around soft, breathable fabric.'],
     ['/about', 'About', 'about', 'About', 'Lette Little was born from one idea: clothing that feels as gentle as a mother\'s touch and as light as a cloud.'],
     ['/journal', 'Journal', 'journal', 'Journal', 'Notes on dressing little ones: fabric care, gifting ideas, and slow family mornings from the Lette Little studio.'],
     ['/size-guide', 'SizeGuide', 'size-guide', 'Size Guide', 'Find the right Lette Little size by your baby\'s height and weight, with room to grow.'],
     ['/care-guide', 'CareGuide', 'care-guide', 'Care Guide', 'How to wash, dry, and store Lette Little pieces so they stay soft wash after wash.'],
     ['/shipping-returns', 'ShippingReturns', 'shipping-returns', 'Shipping & Returns', 'Courier options, delivery times, and how returns work for Lette Little orders across Indonesia.'],
-    ['/faq', 'Faq', 'faq', 'FAQ', 'Answers to the questions we hear most about Lette Little sizing, fabric, payment, and delivery.'],
     ['/privacy', 'Privacy', 'privacy', 'Privacy Policy', 'How Lette Little collects, uses, and protects your personal data.'],
     ['/terms', 'Terms', 'terms', 'Terms & Conditions', 'The terms that apply when you shop with Lette Little.'],
 ];

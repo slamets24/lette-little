@@ -2,7 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
 import { categories } from '@/data/lette';
-import { shop } from '@/routes';
+import { category as shopCategory } from '@/routes/shop';
 </script>
 
 <template>
@@ -20,12 +20,16 @@ import { shop } from '@/routes';
                 :key="category.slug"
                 class="collection-card"
             >
-                <img :src="category.image" :alt="category.name" />
+                <img
+                    :src="category.image"
+                    :alt="category.name"
+                    width="166"
+                    height="166"
+                />
                 <div>
                     <span>{{ category.name }}</span>
                     <p>{{ category.intro }}</p>
-                    <Link
-                        :href="shop.url({ query: { category: category.slug } })"
+                    <Link :href="shopCategory.url(category.slug)"
                         >SHOP {{ category.name.toUpperCase() }}</Link
                     >
                 </div>

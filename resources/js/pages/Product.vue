@@ -14,6 +14,7 @@ import type { ProductCardProduct } from '@/components/lette/ProductCard.vue';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
 import { useCart } from '@/composables/useCart';
 import { careGuide, cart, shop, sizeGuide } from '@/routes';
+import { category as shopCategory } from '@/routes/shop';
 
 type ProductImage = {
     id: number;
@@ -96,7 +97,10 @@ const canAddToCart = computed(
 );
 
 function changeQuantity(nextQuantity: number) {
-    quantity.value = Math.min(Math.max(1, nextQuantity), maxQuantity.value || 1);
+    quantity.value = Math.min(
+        Math.max(1, nextQuantity),
+        maxQuantity.value || 1,
+    );
 }
 
 function selectVariant(variant: ProductVariant) {
@@ -131,15 +135,20 @@ function money(value: number) {
             <nav class="breadcrumb" aria-label="Breadcrumb">
                 <Link :href="shop.url()">Shop</Link>
                 <span>/</span>
-                <Link
-                    :href="shop.url({ query: { category: product.category.slug } })"
-                >{{ product.category.name }}</Link>
+                <Link :href="shopCategory.url(product.category.slug)">{{
+                    product.category.name
+                }}</Link>
             </nav>
 
             <div class="product-layout">
                 <div class="media-column">
                     <div class="main-image">
-                        <img :src="currentImage" :alt="product.name" />
+                        <img
+                            :src="currentImage"
+                            :alt="product.name"
+                            width="600"
+                            height="600"
+                        />
                     </div>
                     <div
                         v-if="product.images.length > 1"
@@ -153,7 +162,12 @@ function money(value: number) {
                             :class="{ active: currentImage === image.path }"
                             @click="currentImage = image.path"
                         >
-                            <img :src="image.path" :alt="image.alt_text" />
+                            <img
+                                :src="image.path"
+                                :alt="image.alt_text"
+                                width="600"
+                                height="600"
+                            />
                         </button>
                     </div>
                 </div>
@@ -237,7 +251,8 @@ function money(value: number) {
                         </div>
 
                         <p v-if="justAdded" class="cart-notice">
-                            Added to cart. You can continue shopping or continue to checkout.
+                            Added to cart. You can continue shopping or continue
+                            to checkout.
                         </p>
                     </div>
 
