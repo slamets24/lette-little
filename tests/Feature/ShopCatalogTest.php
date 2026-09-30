@@ -12,6 +12,45 @@ class ShopCatalogTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_home_shows_empty_featured_products_without_catalog(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Welcome')
+                ->has('featuredProducts', 0)
+            );
+    }
+
+    public function test_home_displays_featured_products(): void
+    {
+        $this->seed(CatalogSeeder::class);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Welcome')
+                ->has('featuredProducts', 3)
+                ->where('featuredProducts.0.name', 'Cloud Dress')
+                ->where('featuredProducts.0.category.name', 'Dresses')
+            );
+    }
+
+    public function test_home_hides_inactive_featured_products(): void
+    {
+        $this->seed(CatalogSeeder::class);
+
+        Product::query()->where('slug', 'cloud-dress')->update(['is_active' => false]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Welcome')
+                ->has('featuredProducts', 2)
+                ->where('featuredProducts.0.name', 'Little Bloom Romper')
+            );
+    }
+
     public function test_shop_displays_seeded_catalog(): void
     {
         $this->seed(CatalogSeeder::class);

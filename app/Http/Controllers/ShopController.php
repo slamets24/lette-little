@@ -4,12 +4,49 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\Seo\PageMeta;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ShopController extends Controller
 {
+    /**
+     * Display the storefront home page.
+     */
+    public function home(): Response
+    {
+        $featuredProducts = Product::query()
+            ->active()
+            ->where('is_featured', true)
+            ->whereHas('category', fn ($query) => $query->active())
+            ->with([
+                'category:id,name,slug',
+                'primaryImage:id,product_id,path,alt_text',
+                'variants' => fn ($query) => $query->active()->orderBy('size')->orderBy('color'),
+            ])
+            ->orderBy('name')
+            ->limit(8)
+            ->get();
+
+        return Inertia::render('Welcome', [
+            'featuredProducts' => $featuredProducts->map(
+                fn (Product $product) => $this->presentProduct($product),
+            ),
+            'meta' => PageMeta::make(
+                jsonLd: [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Store',
+                    'name' => config('app.name'),
+                    'description' => PageMeta::DEFAULT_DESCRIPTION,
+                    'url' => route('home'),
+                    'image' => url(PageMeta::DEFAULT_IMAGE),
+                    'areaServed' => 'ID',
+                ],
+            ),
+        ]);
+    }
+
     /**
      * Display the customer product catalog.
      */
@@ -93,6 +130,10 @@ class ShopController extends Controller
             'products' => $products->map(fn (Product $product) => $this->presentProduct($product)),
             'sizes' => $sizes,
             'filters' => $filters,
+            'meta' => PageMeta::make(
+                title: 'Shop',
+                description: 'Browse every Lette Little piece: calm, breathable dresses, rompers, sets, and sleepwear for newborn gifting and daily dressing.',
+            ),
         ]);
     }
 
@@ -155,7 +196,43 @@ class ShopController extends Controller
                 ])->values(),
             ],
             'relatedProducts' => $relatedProducts->map(fn (Product $product) => $this->presentProduct($product)),
+            'meta' => PageMeta::make(
+                title: $product->name,
+                description: $product->description,
+                image: $product->images->first()?->path,
+                jsonLd: $this->productJsonLd($product),
+            ),
         ]);
+    }
+
+    /**
+     * Build the schema.org product payload for a product detail page.
+     *
+     * @return array<string, mixed>
+     */
+    private function productJsonLd(Product $product): array
+    {
+        $variants = $product->variants;
+        $price = $variants->min('price') ?? $product->base_price;
+        $inStock = $variants->sum('stock') > 0;
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $product->name,
+            'description' => $product->description,
+            'category' => $product->category->name,
+            'image' => $product->images->map(fn ($image) => url($image->path))->values()->all(),
+            'offers' => [
+                '@type' => 'Offer',
+                'url' => route('shop.show', $product),
+                'price' => (string) $price,
+                'priceCurrency' => 'IDR',
+                'availability' => $inStock
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/OutOfStock',
+            ],
+        ];
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\Cart\CartManager;
+use App\Services\Seo\PageMeta;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -21,6 +22,11 @@ class CartController extends Controller
         return Inertia::render('Cart', [
             'cart' => $cartManager->present($cart?->fresh()),
             'cartAdjustments' => $adjustments,
+            'meta' => PageMeta::make(
+                title: 'Cart',
+                description: 'Review the pieces in your Lette Little cart before checkout.',
+                noindex: true,
+            ),
         ]);
     }
 

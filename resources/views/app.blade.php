@@ -34,9 +34,27 @@
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
+        @php($meta = $page['props']['meta'] ?? [])
+
+        <meta name="description" content="{{ $meta['description'] ?? '' }}">
+        <meta name="robots" content="{{ $meta['robots'] ?? 'index, follow' }}">
+        <link rel="canonical" href="{{ url()->current() }}">
+
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="{{ config('app.name') }}">
+        <meta property="og:title" content="{{ $meta['title'] ?? config('app.name') }}">
+        <meta property="og:description" content="{{ $meta['description'] ?? '' }}">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:image" content="{{ $meta['image'] ?? '' }}">
+        <meta name="twitter:card" content="summary_large_image">
+
+        @if (! empty($meta['json_ld']))
+            <script type="application/ld+json">{!! json_encode($meta['json_ld'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+        @endif
+
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            <title>{{ $meta['title'] ?? config('app.name', 'Laravel') }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

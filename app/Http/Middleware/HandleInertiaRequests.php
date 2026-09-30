@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Services\Cart\CartManager;
+use App\Services\Seo\PageMeta;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,6 +40,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'meta' => PageMeta::make(),
             'auth' => [
                 'user' => $request->user(),
             ],
