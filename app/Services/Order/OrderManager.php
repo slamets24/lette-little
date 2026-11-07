@@ -6,6 +6,7 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentProvider;
 use App\Enums\PaymentStatus;
 use App\Enums\StockMovementType;
+use App\Jobs\SyncStockAcrossChannelsJob;
 use App\Models\Address;
 use App\Models\Cart;
 use App\Models\CartItem;
@@ -260,6 +261,11 @@ class OrderManager
             'reference_id' => $order->id,
             'notes' => "Order {$order->order_number} item {$orderItem->id}",
         ]);
+
+        $freshVariant = $variant->fresh();
+        if ($freshVariant) {
+            SyncStockAcrossChannelsJob::dispatch($freshVariant->id, $freshVariant->available_stock)->afterCommit();
+        }
     }
 
     /**

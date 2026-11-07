@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Enums\StockMovementType;
+use App\Jobs\SyncStockAcrossChannelsJob;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Support\Arr;
@@ -24,6 +25,7 @@ class ProductCatalogManager
             foreach ($variants as $variantData) {
                 $variant = $product->variants()->create(Arr::except($variantData, ['id']));
                 $this->recordStockAdjustment($variant, $variant->stock, 'Initial admin stock');
+                SyncStockAcrossChannelsJob::dispatch($variant->id, $variant->available_stock)->afterCommit();
             }
 
             return $product->refresh();
@@ -51,10 +53,15 @@ class ProductCatalogManager
                     $variant = $product->variants()->whereKey($variantId)->firstOrFail();
                     $previousStock = $variant->stock;
                     $variant->update($payload);
-                    $this->recordStockAdjustment($variant, $variant->stock - $previousStock, 'Admin stock update');
+                    $difference = $variant->stock - $previousStock;
+                    $this->recordStockAdjustment($variant, $difference, 'Admin stock update');
+                    if ($difference !== 0) {
+                        SyncStockAcrossChannelsJob::dispatch($variant->id, $variant->available_stock)->afterCommit();
+                    }
                 } else {
                     $variant = $product->variants()->create($payload);
                     $this->recordStockAdjustment($variant, $variant->stock, 'Initial admin stock');
+                    SyncStockAcrossChannelsJob::dispatch($variant->id, $variant->available_stock)->afterCommit();
                 }
 
                 $submittedVariantIds[] = $variant->id;

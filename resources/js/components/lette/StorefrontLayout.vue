@@ -27,6 +27,7 @@ import {
 } from '@/routes';
 import { index as ordersIndex } from '@/routes/orders';
 import { category as shopCategory } from '@/routes/shop';
+import LazyAIChatBubble from '@/components/LazyAIChatBubble.vue';
 
 defineProps<{
     active:
@@ -320,6 +321,8 @@ onBeforeUnmount(() => {
                 <Link :href="terms.url()">Terms & Conditions</Link>
             </div>
         </footer>
+
+        <LazyAIChatBubble />
     </div>
 </template>
 

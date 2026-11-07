@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\AiChatController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartImportController;
 use App\Http\Controllers\CartItemController;
@@ -36,6 +37,7 @@ Route::get('/orders', [OrderController::class, 'index'])->middleware(['auth', 'v
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 Route::get('/collection', [StorefrontPageController::class, 'collection'])->name('collection');
 Route::get('/faq', [StorefrontPageController::class, 'faq'])->name('faq');
+Route::post('/chat', [AiChatController::class, 'chat'])->middleware('throttle:30,1')->name('chat');
 
 $storefrontPages = [
     ['/about', 'About', 'about', 'About', 'Lette Little was born from one idea: clothing that feels as gentle as a mother\'s touch and as light as a cloud.'],

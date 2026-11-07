@@ -47,4 +47,13 @@ return [
         'account_number' => env('BANK_TRANSFER_ACCOUNT_NUMBER'),
     ],
 
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+    ],
+
+    'whatsapp' => [
+        'number' => env('WHATSAPP_NUMBER', '6283822458988'),
+    ],
+
 ];
