@@ -3,7 +3,7 @@ import { defineAsyncComponent } from 'vue';
 import { initializeTheme } from '@/composables/useAppearance';
 import { initializeFlashToast } from '@/lib/flashToast';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Lette Little';
 
 /**
  * Admin, auth and settings layouts are split into their own chunks so that
@@ -29,7 +29,11 @@ const SettingsLayout = defineAsyncComponent(
 const appShellPages = ['Dashboard'];
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title) => {
+        if (!title || title === appName || title === 'Welcome') return appName;
+        if (title.includes(appName)) return title;
+        return `${title} — ${appName}`;
+    },
     layout: (name) => {
         switch (true) {
             case name.startsWith('auth/'):

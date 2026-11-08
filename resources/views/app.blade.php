@@ -42,8 +42,8 @@
         <link rel="canonical" href="{{ $canonical }}">
 
         <meta property="og:type" content="website">
-        <meta property="og:site_name" content="{{ config('app.name') }}">
-        <meta property="og:title" content="{{ $meta['title'] ?? config('app.name') }}">
+        <meta property="og:site_name" content="{{ config('app.name', 'Lette Little') }}">
+        <meta property="og:title" content="{{ $meta['title'] ?? config('app.name', 'Lette Little') }}">
         <meta property="og:description" content="{{ $meta['description'] ?? '' }}">
         <meta property="og:url" content="{{ $canonical }}">
         <meta property="og:image" content="{{ $meta['image'] ?? '' }}">
@@ -68,7 +68,7 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
-            <title>{{ $meta['title'] ?? config('app.name', 'Laravel') }}</title>
+            <title>{{ $meta['title'] ?? config('app.name', 'Lette Little') }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

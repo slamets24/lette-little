@@ -25,7 +25,7 @@ const instagramImages = [
 
 <template>
     <StorefrontLayout active="home">
-        <Head />
+        <Head title="Lette Little" />
 
         <section class="home-hero">
             <img

@@ -5,6 +5,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 ENV VERCEL=1
+ENV VITE_APP_NAME="Lette Little"
 RUN npm run build
 
 # Stage 2: Production PHP runtime with FrankenPHP
@@ -12,6 +13,7 @@ FROM dunglas/frankenphp:1-php8.4-bookworm
 
 ENV SERVER_NAME="http://"
 ENV PORT=80
+ENV APP_NAME="Lette Little"
 
 # Install required PHP extensions
 RUN install-php-extensions \
