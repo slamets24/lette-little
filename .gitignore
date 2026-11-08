@@ -68,3 +68,7 @@ yarn-error.log
 # Unused design-source artboards. Artboard 1 is still used by the auth layout.
 /public/images/lette/LOGO/Artboard 2.png
 /public/images/lette/LOGO/Artboard 3.png
+.neon
+
+.vercel
+.env*
