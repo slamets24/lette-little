@@ -8,7 +8,7 @@ ENV VERCEL=1
 RUN npm run build
 
 # Stage 2: Production PHP runtime with FrankenPHP
-FROM dunglas/frankenphp:latest-php8.4
+FROM dunglas/frankenphp:1-php8.4-bookworm
 
 # Install required PHP extensions
 RUN install-php-extensions \
