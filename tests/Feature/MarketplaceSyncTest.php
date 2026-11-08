@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\Marketplace\ShopeeService;
 use App\Services\Marketplace\TikTokService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
@@ -128,7 +129,7 @@ class MarketplaceSyncTest extends TestCase
 
         $this->assertTrue($result);
 
-        Http::assertSent(function (\Illuminate\Http\Client\Request $request) {
+        Http::assertSent(function (Request $request) {
             $data = $request->data();
 
             return str_contains($request->url(), '/api/v2/product/update_stock')
@@ -161,7 +162,7 @@ class MarketplaceSyncTest extends TestCase
 
         $this->assertTrue($result);
 
-        Http::assertSent(function (\Illuminate\Http\Client\Request $request) {
+        Http::assertSent(function (Request $request) {
             $data = $request->data();
 
             return str_contains($request->url(), '/product/202309/products/9001/inventory/update')

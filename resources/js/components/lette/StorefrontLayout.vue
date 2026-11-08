@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import {
-    Cloud,
     Mail,
     Menu,
     Search,
@@ -171,9 +170,13 @@ onBeforeUnmount(() => {
                     :class="{ active: active === 'home' }"
                     aria-label="Lette Little home"
                 >
-                    <Cloud class="brand-cloud" />
-                    <span>Lette Little</span>
-                    <small>MADE LIGHT. MADE GENTLE.</small>
+                    <img
+                        src="/images/lette/logo-navbar.png"
+                        alt="Lette Little - Made Light. Made Gentle."
+                        class="brand-logo-img"
+                        width="88"
+                        height="57"
+                    />
                 </Link>
 
                 <div class="nav-actions" aria-label="Shop tools">
@@ -206,9 +209,17 @@ onBeforeUnmount(() => {
                     <Link
                         :href="home.url()"
                         class="mobile-brand"
+                        aria-label="Lette Little home"
                         @click="closeMenu"
-                        ><Cloud /> Lette Little</Link
                     >
+                        <img
+                            src="/images/lette/logo-navbar.png"
+                            alt="Lette Little"
+                            class="mobile-brand-img"
+                            width="84"
+                            height="54"
+                        />
+                    </Link>
                     <button
                         class="mobile-close-button"
                         type="button"
@@ -245,9 +256,22 @@ onBeforeUnmount(() => {
         <footer class="site-footer">
             <div class="footer-inner">
                 <section class="footer-brand">
-                    <Cloud />
-                    <h2>Lette Little</h2>
-                    <p>
+                    <Link
+                        :href="home.url()"
+                        class="footer-brand-logo-link"
+                        aria-label="Lette Little home"
+                    >
+                        <img
+                            src="/images/lette/logo-footer.png"
+                            alt="Lette Little - Made Light. Made Gentle."
+                            class="footer-brand-logo"
+                            width="118"
+                            height="220"
+                            loading="lazy"
+                        />
+                    </Link>
+                    <h2 class="sr-only">Lette Little</h2>
+                    <p class="footer-brand-desc">
                         Soft essentials for little ones. Made light. Made
                         gentle.
                     </p>
@@ -399,36 +423,27 @@ onBeforeUnmount(() => {
 }
 
 .brand-lockup {
-    display: grid;
+    display: inline-flex;
     min-height: 44px;
-    align-content: center;
-    justify-items: center;
-    color: var(--lette-brand);
-    text-align: center;
-    line-height: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 0;
 }
 
-.brand-cloud {
-    width: 35px;
-    height: 24px;
-    margin-bottom: 6px;
-    stroke-width: 1.35;
+.brand-logo-img {
+    height: 56px;
+    width: auto;
+    max-width: 130px;
+    object-fit: contain;
+    display: block;
+    transition:
+        transform 200ms ease,
+        opacity 200ms ease;
 }
 
-.brand-lockup span {
-    color: var(--lette-brand);
-    font-size: 26px;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    white-space: nowrap;
-}
-
-.brand-lockup small {
-    margin-top: 6px;
-    color: var(--lette-muted);
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.22em;
+.brand-lockup:hover .brand-logo-img {
+    opacity: 0.9;
+    transform: scale(1.02);
 }
 
 .nav-actions {
@@ -498,10 +513,15 @@ onBeforeUnmount(() => {
 }
 
 .mobile-brand {
-    gap: 8px;
-    color: var(--lette-brand);
-    font-family: var(--lette-heading-font);
-    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.mobile-brand-img {
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+    display: block;
 }
 
 .mobile-drawer-panel > a:not(.mobile-brand) {
@@ -531,6 +551,33 @@ onBeforeUnmount(() => {
     padding: 52px 42px 30px;
 }
 
+.footer-brand-logo-link {
+    display: inline-block;
+    margin-bottom: 14px;
+    line-height: 0;
+}
+
+.footer-brand-logo {
+    width: 118px;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    transition: opacity 200ms ease;
+}
+
+.footer-brand-logo-link:hover .footer-brand-logo {
+    opacity: 0.9;
+}
+
+.footer-brand-desc {
+    margin-top: 2px;
+    margin-bottom: 10px;
+    color: var(--lette-muted);
+    font-size: 12px;
+    line-height: 1.75;
+    max-width: 260px;
+}
+
 .footer-brand h2 {
     margin-top: 8px;
     color: var(--lette-brand);
@@ -555,8 +602,7 @@ onBeforeUnmount(() => {
     margin-left: -10px;
 }
 
-.social-row a,
-.footer-brand > svg {
+.social-row a {
     color: var(--lette-brand);
 }
 
@@ -644,23 +690,8 @@ onBeforeUnmount(() => {
         letter-spacing: 0.12em;
     }
 
-    .brand-cloud {
-        width: 29px;
-        height: 20px;
-        margin-bottom: 4px;
-    }
-
-    .brand-lockup span {
-        font-size: 22px;
-        letter-spacing: 0.07em;
-    }
-
-    .brand-lockup small {
-        max-width: 118px;
-        margin-top: 4px;
-        font-size: 7px;
-        letter-spacing: 0.18em;
-        line-height: 1.15;
+    .brand-logo-img {
+        height: 50px;
     }
 
     .nav-actions svg {
@@ -709,8 +740,8 @@ onBeforeUnmount(() => {
         letter-spacing: 0;
     }
 
-    .brand-lockup span {
-        font-size: 22px;
+    .brand-logo-img {
+        height: 46px;
     }
 
     .footer-inner {
@@ -747,9 +778,8 @@ onBeforeUnmount(() => {
         font-size: 8px;
     }
 
-    .brand-cloud,
-    .brand-lockup small {
-        display: none;
+    .brand-logo-img {
+        height: 42px;
     }
 
     .footer-inner {
