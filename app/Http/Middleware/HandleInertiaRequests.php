@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Cart\CartManager;
+use App\Services\Seo\PageMeta;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -38,10 +40,60 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'meta' => $this->defaultMeta($request),
             'auth' => [
                 'user' => $request->user(),
             ],
+            'cart' => fn () => [
+                'count' => app(CartManager::class)->count($request),
+            ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
+    }
+
+    /**
+     * Route names of private pages mapped to their page titles.
+     *
+     * These pages are never indexed. Route names ending in `*` match any
+     * route below that prefix.
+     *
+     * @var array<string, string|null>
+     */
+    private const PRIVATE_PAGES = [
+        'login' => 'Log in',
+        'register' => 'Register',
+        'password.request' => 'Forgot password',
+        'password.reset' => 'Reset password',
+        'password.confirm' => 'Confirm password',
+        'verification.notice' => 'Verify email',
+        'two-factor.login' => 'Two-factor authentication',
+        'dashboard' => 'Dashboard',
+        'admin.*' => 'Admin',
+        'profile.*' => 'Settings',
+        'security.*' => 'Settings',
+        'appearance.*' => 'Settings',
+    ];
+
+    /**
+     * Build the fallback metadata for pages that do not pass their own.
+     *
+     * Authentication, account, and admin pages are marked noindex here so
+     * every Fortify view and back-office page is covered in one place.
+     *
+     * @return array<string, mixed>
+     */
+    private function defaultMeta(Request $request): array
+    {
+        foreach (self::PRIVATE_PAGES as $routeName => $title) {
+            if ($request->routeIs($routeName)) {
+                return PageMeta::make(title: $title, noindex: true);
+            }
+        }
+
+        if ($request->is('admin', 'admin/*', 'settings', 'settings/*')) {
+            return PageMeta::make(noindex: true);
+        }
+
+        return PageMeta::make();
     }
 }

@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import {
-    ChevronDown,
     Cloud,
     Mail,
     Menu,
@@ -10,47 +9,146 @@ import {
     UserRound,
     X,
 } from '@lucide/vue';
-import { ref } from 'vue';
-import { useCart } from '@/composables/useCart';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import {
+    about,
+    careGuide,
+    cart,
+    collection,
+    faq,
+    home,
+    journal,
+    login,
+    privacy,
+    shippingReturns,
+    shop,
+    sizeGuide,
+    terms,
+} from '@/routes';
+import { index as ordersIndex } from '@/routes/orders';
+import { category as shopCategory } from '@/routes/shop';
+import LazyAIChatBubble from '@/components/LazyAIChatBubble.vue';
 
 defineProps<{
-    active: 'shop' | 'collection' | 'about' | 'journal' | 'home' | 'cart';
+    active:
+        | 'shop'
+        | 'collection'
+        | 'about'
+        | 'journal'
+        | 'home'
+        | 'cart'
+        | 'orders'
+        | 'info';
 }>();
 
+const page = usePage();
 const menuOpen = ref(false);
-const { cartCount } = useCart();
+const cartCount = computed(() => page.props.cart?.count ?? 0);
+const accountHref = computed(() =>
+    page.props.auth?.user ? ordersIndex.url() : login.url(),
+);
 
 const navItems = [
-    { label: 'SHOP', href: '/shop', key: 'shop' },
-    { label: 'COLLECTION', href: '/collection', key: 'collection' },
-    { label: 'ABOUT', href: '/about', key: 'about' },
-    { label: 'JOURNAL', href: '/journal', key: 'journal' },
+    { label: 'SHOP', href: shop.url(), key: 'shop' },
+    { label: 'COLLECTION', href: collection.url(), key: 'collection' },
+    { label: 'ABOUT', href: about.url(), key: 'about' },
+    { label: 'JOURNAL', href: journal.url(), key: 'journal' },
 ] as const;
+
+const menuButton = ref<HTMLButtonElement | null>(null);
+const menuPanel = ref<HTMLElement | null>(null);
+
+function focusableItems(): HTMLElement[] {
+    if (!menuPanel.value) {
+        return [];
+    }
+
+    return Array.from(
+        menuPanel.value.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled])',
+        ),
+    );
+}
+
+function closeMenu() {
+    menuOpen.value = false;
+}
+
+/**
+ * Stop the page behind the drawer from scrolling while it is open.
+ */
+function lockPageScroll(locked: boolean) {
+    const overflow = locked ? 'hidden' : '';
+
+    document.documentElement.style.overflow = overflow;
+    document.body.style.overflow = overflow;
+}
+
+/**
+ * Keep keyboard focus inside the drawer and close it on Escape.
+ */
+function onDrawerKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+        closeMenu();
+
+        return;
+    }
+
+    if (event.key !== 'Tab') {
+        return;
+    }
+
+    const items = focusableItems();
+
+    if (items.length === 0) {
+        return;
+    }
+
+    const first = items[0];
+    const last = items[items.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+    }
+}
+
+watch(menuOpen, async (open) => {
+    lockPageScroll(open);
+
+    if (open) {
+        await nextTick();
+        focusableItems()[0]?.focus();
+
+        return;
+    }
+
+    menuButton.value?.focus();
+});
+
+onBeforeUnmount(() => {
+    lockPageScroll(false);
+});
 </script>
 
 <template>
-    <Head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossorigin="anonymous"
-        />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-        />
-    </Head>
-
     <div class="lette-site">
-        <div class="shipping-bar">FREE SHIPPING ON ORDERS OVER IDR 500.000</div>
+        <div class="shipping-bar">
+            SHIPS ACROSS INDONESIA · COURIER QUOTE AFTER CHECKOUT
+        </div>
 
         <header class="site-header">
             <nav class="nav-shell" aria-label="Primary navigation">
                 <button
+                    ref="menuButton"
                     class="mobile-menu-button"
                     type="button"
                     aria-label="Open menu"
+                    aria-haspopup="dialog"
+                    :aria-expanded="menuOpen"
                     @click="menuOpen = true"
                 >
                     <Menu />
@@ -68,7 +166,7 @@ const navItems = [
                 </div>
 
                 <Link
-                    href="/"
+                    :href="home.url()"
                     class="brand-lockup"
                     :class="{ active: active === 'home' }"
                     aria-label="Lette Little home"
@@ -79,16 +177,15 @@ const navItems = [
                 </Link>
 
                 <div class="nav-actions" aria-label="Shop tools">
-                    <button type="button" class="currency-button">
-                        IDR <ChevronDown />
-                    </button>
-                    <Link href="/shop" aria-label="Search products"
+                    <Link
+                        :href="`${shop.url()}#shop-search`"
+                        aria-label="Search products"
                         ><Search
                     /></Link>
-                    <Link href="/login" aria-label="Account"
+                    <Link :href="accountHref" aria-label="Account"
                         ><UserRound
                     /></Link>
-                    <Link href="/cart" class="cart-link" aria-label="Cart"
+                    <Link :href="cart.url()" class="cart-link" aria-label="Cart"
                         ><ShoppingBag /><span>({{ cartCount }})</span></Link
                     >
                 </div>
@@ -101,19 +198,22 @@ const navItems = [
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation"
+            @click.self="closeMenu"
+            @keydown="onDrawerKeydown"
         >
-            <div class="mobile-drawer-panel">
+            <div ref="menuPanel" class="mobile-drawer-panel">
                 <div class="mobile-drawer-top">
                     <Link
-                        href="/"
+                        :href="home.url()"
                         class="mobile-brand"
-                        @click="menuOpen = false"
+                        @click="closeMenu"
                         ><Cloud /> Lette Little</Link
                     >
                     <button
+                        class="mobile-close-button"
                         type="button"
                         aria-label="Close menu"
-                        @click="menuOpen = false"
+                        @click="closeMenu"
                     >
                         <X />
                     </button>
@@ -123,9 +223,17 @@ const navItems = [
                     :key="item.key"
                     :href="item.href"
                     :class="{ active: active === item.key }"
-                    @click="menuOpen = false"
+                    @click="closeMenu"
                 >
                     {{ item.label }}
+                </Link>
+                <Link
+                    :href="accountHref"
+                    class="mobile-account-link"
+                    :class="{ active: active === 'orders' }"
+                    @click="closeMenu"
+                >
+                    Account
                 </Link>
             </div>
         </div>
@@ -147,10 +255,18 @@ const navItems = [
                         <a
                             href="https://instagram.com/lettelittle.id"
                             aria-label="Instagram"
-                            ><img src="/images/lette/instagram.webp" alt=""
+                            ><img
+                                src="/images/lette/instagram.webp"
+                                alt=""
+                                width="96"
+                                height="96"
                         /></a>
                         <a href="https://facebook.com" aria-label="Facebook"
-                            ><img src="/images/lette/facebook.webp" alt=""
+                            ><img
+                                src="/images/lette/facebook.webp"
+                                alt=""
+                                width="96"
+                                height="96"
                         /></a>
                         <a href="mailto:hello@lettelittle.id" aria-label="Email"
                             ><Mail
@@ -163,25 +279,27 @@ const navItems = [
 
                 <section class="footer-group">
                     <h3>SHOP</h3>
-                    <Link href="/shop">All Products</Link>
-                    <Link href="/collection">Dresses</Link>
-                    <Link href="/collection">Rompers</Link>
-                    <Link href="/collection">Sets</Link>
-                    <Link href="/collection">Sleepwear</Link>
+                    <Link :href="shop.url()">All Products</Link>
+                    <Link :href="shopCategory.url('dresses')">Dresses</Link>
+                    <Link :href="shopCategory.url('rompers')">Rompers</Link>
+                    <Link :href="shopCategory.url('sets')">Sets</Link>
+                    <Link :href="shopCategory.url('sleepwear')">Sleepwear</Link>
                 </section>
 
                 <section class="footer-group">
                     <h3>INFO</h3>
-                    <a href="#">Size Guide</a>
-                    <a href="#">Care Guide</a>
-                    <a href="#">Shipping & Returns</a>
-                    <a href="#">FAQ</a>
+                    <Link :href="sizeGuide.url()">Size Guide</Link>
+                    <Link :href="careGuide.url()">Care Guide</Link>
+                    <Link :href="shippingReturns.url()"
+                        >Shipping & Returns</Link
+                    >
+                    <Link :href="faq.url()">FAQ</Link>
                 </section>
 
                 <section class="footer-group">
                     <h3>ABOUT</h3>
-                    <Link href="/about">Our Story</Link>
-                    <Link href="/journal">Journal</Link>
+                    <Link :href="about.url()">Our Story</Link>
+                    <Link :href="journal.url()">Journal</Link>
                     <a href="mailto:hello@lettelittle.id">Contact Us</a>
                 </section>
 
@@ -191,37 +309,37 @@ const navItems = [
                         Be the first to know about new collections and special
                         offers.
                     </p>
-                    <form @submit.prevent>
-                        <input
-                            type="email"
-                            placeholder="Your email"
-                            aria-label="Your email"
-                        />
-                        <button type="submit" aria-label="Subscribe">+</button>
-                    </form>
+                    <a
+                        href="mailto:hello@lettelittle.id?subject=Lette%20Little%20updates"
+                    >
+                        Email us for updates
+                    </a>
                 </section>
             </div>
             <div class="legal-row">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms & Conditions</a>
+                <Link :href="privacy.url()">Privacy Policy</Link>
+                <Link :href="terms.url()">Terms & Conditions</Link>
             </div>
         </footer>
+
+        <LazyAIChatBubble />
     </div>
 </template>
 
 <style scoped>
 .lette-site {
     min-height: 100vh;
-    background: #fcf9f3;
-    color: #4e453f;
-    font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+    background: var(--lette-canvas);
+    color: var(--lette-text);
+    font-family: var(--lette-body-font);
 }
 
 .lette-site :deep(h1),
 .lette-site :deep(h2),
 .lette-site :deep(h3),
-.brand-lockup span {
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+.brand-lockup,
+.mobile-brand {
+    font-family: var(--lette-heading-font);
 }
 
 .shipping-bar {
@@ -229,7 +347,7 @@ const navItems = [
     min-height: 25px;
     place-items: center;
     background: #e8dfd4;
-    color: #6c5b4e;
+    color: var(--lette-brand);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -264,9 +382,8 @@ const navItems = [
 }
 
 .nav-left a,
-.nav-actions a,
-.currency-button {
-    color: #4e453f;
+.nav-actions a {
+    color: var(--lette-text);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -277,15 +394,16 @@ const navItems = [
 
 .nav-left a.active,
 .nav-left a:hover,
-.nav-actions a:hover,
-.currency-button:hover {
-    color: #1c1c18;
+.nav-actions a:hover {
+    color: var(--lette-ink);
 }
 
 .brand-lockup {
     display: grid;
+    min-height: 44px;
+    align-content: center;
     justify-items: center;
-    color: #6c5b4e;
+    color: var(--lette-brand);
     text-align: center;
     line-height: 1;
 }
@@ -298,7 +416,7 @@ const navItems = [
 }
 
 .brand-lockup span {
-    color: #6c5b4e;
+    color: var(--lette-brand);
     font-size: 26px;
     font-weight: 400;
     letter-spacing: 0.08em;
@@ -307,7 +425,7 @@ const navItems = [
 
 .brand-lockup small {
     margin-top: 6px;
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 8px;
     font-weight: 700;
     letter-spacing: 0.22em;
@@ -315,11 +433,21 @@ const navItems = [
 
 .nav-actions {
     justify-content: flex-end;
-    gap: 18px;
+    gap: 0;
+}
+
+/* Header icons keep a comfortable touch area without growing visually. */
+.nav-actions a,
+.mobile-menu-button,
+.mobile-close-button {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-actions svg,
-.currency-button svg,
 .mobile-menu-button svg,
 .mobile-drawer svg,
 .footer-brand svg,
@@ -329,7 +457,6 @@ const navItems = [
     stroke-width: 1.45;
 }
 
-.currency-button,
 .cart-link {
     display: inline-flex;
     align-items: center;
@@ -338,7 +465,7 @@ const navItems = [
 
 .mobile-menu-button {
     display: none;
-    color: #6c5b4e;
+    color: var(--lette-brand);
 }
 
 .mobile-drawer {
@@ -354,7 +481,7 @@ const navItems = [
     width: min(88vw, 360px);
     height: 100%;
     align-content: start;
-    background: #fcf9f3;
+    background: var(--lette-canvas);
     padding: 22px;
     box-shadow: 18px 0 50px rgba(49, 49, 45, 0.14);
 }
@@ -372,27 +499,27 @@ const navItems = [
 
 .mobile-brand {
     gap: 8px;
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: 18px;
 }
 
 .mobile-drawer-panel > a:not(.mobile-brand) {
-    border-bottom: 1px solid #d1c4bc;
+    border-bottom: 1px solid var(--lette-border);
     padding: 16px 0;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.12em;
 }
 
 .mobile-drawer-panel > a.active {
-    color: #1c1c18;
+    color: var(--lette-ink);
 }
 
 .site-footer {
-    border-top: 1px solid #e5ded6;
-    background: #f6f3ed;
+    border-top: 1px solid var(--lette-line);
+    background: var(--lette-sand);
 }
 
 .footer-inner {
@@ -406,7 +533,7 @@ const navItems = [
 
 .footer-brand h2 {
     margin-top: 8px;
-    color: #6c5b4e;
+    color: var(--lette-brand);
     font-size: 24px;
     font-weight: 400;
     letter-spacing: 0.08em;
@@ -416,20 +543,29 @@ const navItems = [
 .newsletter-box p,
 .footer-brand small,
 .legal-row a {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 12px;
     line-height: 1.75;
 }
 
 .social-row {
     display: flex;
-    gap: 12px;
-    margin: 18px 0;
+    gap: 4px;
+    margin: 12px 0;
+    margin-left: -10px;
 }
 
 .social-row a,
 .footer-brand > svg {
-    color: #6c5b4e;
+    color: var(--lette-brand);
+}
+
+.social-row a {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
 }
 
 .social-row img {
@@ -447,39 +583,34 @@ const navItems = [
 
 .footer-group h3,
 .newsletter-box h3 {
-    color: #6c5b4e;
+    color: var(--lette-brand);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.16em;
 }
 
-.footer-group a {
+.footer-group a,
+.legal-row a {
+    display: inline-flex;
     width: fit-content;
-    color: #4e453f;
+    min-height: 24px;
+    align-items: center;
+    color: var(--lette-text);
     font-size: 12px;
     line-height: 1.5;
 }
 
-.newsletter-box form {
-    display: grid;
-    grid-template-columns: 1fr 38px;
+.newsletter-box a {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 24px;
+    align-items: center;
     margin-top: 8px;
-    border: 1px solid #d1c4bc;
-    background: #fcf9f3;
-}
-
-.newsletter-box input {
-    min-width: 0;
-    border: 0;
-    background: transparent;
-    padding: 13px 14px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 12px;
-}
-
-.newsletter-box button {
-    color: #6c5b4e;
-    font-size: 18px;
+    line-height: 1.5;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .legal-row {
@@ -488,7 +619,7 @@ const navItems = [
     gap: 32px;
     max-width: 1220px;
     margin: 0 auto;
-    border-top: 1px solid #e5ded6;
+    border-top: 1px solid var(--lette-line);
     padding: 18px 42px 26px;
 }
 
@@ -508,8 +639,7 @@ const navItems = [
     }
 
     .nav-left a,
-    .nav-actions a,
-    .currency-button {
+    .nav-actions a {
         font-size: 10px;
         letter-spacing: 0.12em;
     }
@@ -533,8 +663,7 @@ const navItems = [
         line-height: 1.15;
     }
 
-    .nav-actions svg,
-    .currency-button svg {
+    .nav-actions svg {
         width: 16px;
         height: 16px;
     }
@@ -543,12 +672,11 @@ const navItems = [
 @media (max-width: 680px) {
     .nav-shell {
         min-height: 72px;
-        grid-template-columns: 40px 1fr 40px;
-        padding: 0 18px;
+        grid-template-columns: 44px 1fr 44px;
+        padding: 0 12px;
     }
 
     .nav-left,
-    .currency-button,
     .nav-actions a:not(.cart-link) {
         display: none;
     }
@@ -567,15 +695,15 @@ const navItems = [
 
     .cart-link span {
         position: absolute;
-        top: -10px;
-        right: -10px;
+        top: 3px;
+        right: 1px;
         display: grid;
         min-width: 18px;
         height: 18px;
         place-items: center;
         border-radius: 999px;
-        background: #6c5b4e;
-        color: #fffdf8;
+        background: var(--lette-brand);
+        color: var(--lette-surface);
         font-size: 9px;
         line-height: 1;
         letter-spacing: 0;
@@ -589,6 +717,18 @@ const navItems = [
         grid-template-columns: 1fr 1fr;
         gap: 32px;
         padding: 42px 22px 28px;
+    }
+
+    /* Roomier touch targets on phones, with tighter gaps so the footer stays short. */
+    .footer-group,
+    .newsletter-box {
+        gap: 2px;
+    }
+
+    .footer-group a,
+    .newsletter-box a,
+    .legal-row a {
+        min-height: 40px;
     }
 
     .footer-brand,

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { Search, SlidersHorizontal } from '@lucide/vue';
-import { computed, reactive } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import ProductCard from '@/components/lette/ProductCard.vue';
 import type { ProductCardProduct } from '@/components/lette/ProductCard.vue';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
@@ -57,6 +57,27 @@ const productOptions = computed<ProductCardProduct[]>(
 const sizeOptions = computed(
     () => props.sizes ?? ['0-3M', '3-6M', '6-12M', '12-18M'],
 );
+const searchInput = ref<HTMLInputElement | null>(null);
+const resultLabel = computed(() => {
+    const total = productOptions.value.length;
+
+    return total === 1 ? '1 piece' : `${total} pieces`;
+});
+const hasActiveFilters = computed(
+    () =>
+        Boolean(form.q) ||
+        Boolean(form.category) ||
+        Boolean(form.size) ||
+        form.in_stock ||
+        Boolean(form.min_price) ||
+        Boolean(form.max_price),
+);
+
+onMounted(() => {
+    if (window.location.hash === '#shop-search') {
+        searchInput.value?.focus();
+    }
+});
 
 function cleanFilters() {
     return Object.fromEntries(
@@ -109,14 +130,44 @@ function resetFilters() {
         </section>
 
         <form class="shop-toolbar" @submit.prevent="applyFilters">
-            <label>
+            <label class="shop-search-field">
                 <Search />
+                <span class="sr-only">Search products</span>
                 <input
+                    id="shop-search"
+                    ref="searchInput"
                     v-model="form.q"
                     type="search"
                     placeholder="Search dresses, rompers, sets..."
                 />
             </label>
+
+            <div class="price-field">
+                <label>
+                    <span class="sr-only">Minimum price</span>
+                    <input
+                        v-model="form.min_price"
+                        type="number"
+                        min="0"
+                        step="10000"
+                        inputmode="numeric"
+                        placeholder="Min price"
+                    />
+                </label>
+                <span aria-hidden="true">–</span>
+                <label>
+                    <span class="sr-only">Maximum price</span>
+                    <input
+                        v-model="form.max_price"
+                        type="number"
+                        min="0"
+                        step="10000"
+                        inputmode="numeric"
+                        placeholder="Max price"
+                    />
+                </label>
+            </div>
+
             <label class="stock-toggle">
                 <input
                     v-model="form.in_stock"
@@ -125,7 +176,8 @@ function resetFilters() {
                 />
                 In stock
             </label>
-            <button type="submit"><SlidersHorizontal /> FILTER</button>
+
+            <button type="submit"><SlidersHorizontal /> Apply</button>
         </form>
 
         <section class="category-tabs" aria-label="Product categories">
@@ -158,6 +210,13 @@ function resetFilters() {
                 {{ size }}
             </button>
         </section>
+
+        <div class="shop-results">
+            <p aria-live="polite">Showing {{ resultLabel }}</p>
+            <button v-if="hasActiveFilters" type="button" @click="resetFilters">
+                Clear filters
+            </button>
+        </div>
 
         <section
             v-if="productOptions.length"
@@ -197,7 +256,7 @@ function resetFilters() {
 }
 
 .shop-hero p {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -206,8 +265,8 @@ function resetFilters() {
 .shop-hero h1 {
     max-width: 720px;
     margin-top: 18px;
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: clamp(36px, 5vw, 64px);
     font-weight: 400;
     line-height: 1.16;
@@ -216,40 +275,89 @@ function resetFilters() {
 .shop-hero span {
     max-width: 590px;
     margin-top: 18px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 15px;
     line-height: 1.8;
 }
 
 .shop-toolbar {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 14px;
-    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
-.shop-toolbar label:not(.stock-toggle),
+.shop-search-field,
+.price-field label,
 .shop-toolbar button,
 .category-tabs button,
 .size-tabs button,
 .empty-state button {
-    border: 1px solid #d1c4bc;
-    background: #fffdf8;
-    color: #4e453f;
+    border: 1px solid var(--lette-border);
+    background: var(--lette-surface);
+    color: var(--lette-text);
 }
 
-.shop-toolbar label:not(.stock-toggle) {
+.shop-search-field,
+.price-field label {
     display: flex;
     align-items: center;
     gap: 10px;
-    min-height: 48px;
+    min-height: var(--lette-cta-height);
     padding: 0 16px;
+}
+
+.shop-search-field {
+    flex: 1 1 240px;
+}
+
+.price-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--lette-muted);
+}
+
+.price-field label {
+    width: 128px;
+    padding: 0 12px;
+}
+
+.price-field input::-webkit-outer-spin-button,
+.price-field input::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.shop-results {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: min(100% - 48px, 1220px);
+    margin: 0 auto 20px;
+    color: var(--lette-muted);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+}
+
+.shop-results button {
+    min-height: 32px;
+    border: 0;
+    background: transparent;
+    color: var(--lette-text);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .shop-toolbar svg {
     width: 18px;
     height: 18px;
-    color: #6c5b4e;
+    color: var(--lette-brand);
     stroke-width: 1.4;
 }
 
@@ -258,25 +366,29 @@ function resetFilters() {
     flex: 1;
     border: 0;
     background: transparent;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 13px;
 }
 
 .shop-toolbar button {
     display: inline-flex;
+    min-height: var(--lette-cta-height);
     align-items: center;
     gap: 8px;
-    padding: 0 18px;
-    font-size: 10px;
+    padding: 0 var(--lette-cta-padding);
+    font-size: var(--lette-cta-size);
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--lette-cta-tracking);
+    text-transform: uppercase;
 }
 
 .stock-toggle {
     display: inline-flex;
+    min-height: var(--lette-cta-height);
     align-items: center;
     gap: 8px;
-    color: #4e453f;
+    padding: 0 4px;
+    color: var(--lette-text);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -286,7 +398,7 @@ function resetFilters() {
 .stock-toggle input {
     width: 15px;
     height: 15px;
-    accent-color: #6c5b4e;
+    accent-color: var(--lette-brand);
 }
 
 .category-tabs,
@@ -316,9 +428,9 @@ function resetFilters() {
 
 .category-tabs button.active,
 .size-tabs button.active {
-    border-color: #6c5b4e;
-    background: #6c5b4e;
-    color: #fffdf8;
+    border-color: var(--lette-brand);
+    background: var(--lette-brand);
+    color: var(--lette-surface);
 }
 
 .product-grid {
@@ -339,21 +451,21 @@ function resetFilters() {
 }
 
 .empty-state h2 {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: 28px;
     font-weight: 400;
 }
 
 .empty-state p {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 13px;
 }
 
 .empty-state button {
     min-height: 42px;
     margin-top: 8px;
-    padding: 0 18px;
+    padding: 0 var(--lette-cta-padding);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.14em;

@@ -1,25 +1,24 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { Minus, Plus, ShoppingBag, Trash2 } from '@lucide/vue';
+import { show as checkout } from '@/actions/App/Http/Controllers/CheckoutController';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
+import type { CartItem } from '@/composables/useCart';
 import { useCart } from '@/composables/useCart';
+import { shop } from '@/routes';
 
-const {
-    items,
-    subtotal,
-    updateQuantity,
-    removeItem,
-    formatMoney,
-    whatsAppCheckoutUrl,
-} = useCart();
+type Cart = {
+    items: CartItem[];
+    count: number;
+    subtotal: number;
+};
 
-function checkout() {
-    if (!items.value.length) {
-        return;
-    }
+defineProps<{
+    cart: Cart;
+    cartAdjustments?: string[];
+}>();
 
-    window.open(whatsAppCheckoutUrl(), '_blank', 'noopener,noreferrer');
-}
+const { updateQuantity, removeItem, formatMoney } = useCart();
 </script>
 
 <template>
@@ -31,16 +30,16 @@ function checkout() {
                 <p>CART</p>
                 <h1>Your gentle picks.</h1>
                 <span>
-                    Review sizes, colors, and quantity before sending your order
-                    to WhatsApp.
+                    Review sizes, colors, and quantity before placing your order
+                    securely.
                 </span>
             </div>
 
-            <div v-if="items.length" class="cart-layout">
+            <div v-if="cart.items.length" class="cart-layout">
                 <section class="cart-items" aria-label="Cart items">
                     <article
-                        v-for="item in items"
-                        :key="item.key"
+                        v-for="item in cart.items"
+                        :key="item.id"
                         class="cart-item"
                     >
                         <Link
@@ -51,6 +50,8 @@ function checkout() {
                             <img
                                 :src="item.product.image"
                                 :alt="item.product.name"
+                                width="600"
+                                height="600"
                             />
                         </Link>
 
@@ -59,10 +60,13 @@ function checkout() {
                                 {{ item.product.name }}
                             </Link>
                             <span>
-                                {{ item.variant.color }} / {{ item.variant.size }}
+                                {{ item.variant.color }} /
+                                {{ item.variant.size }}
                             </span>
                             <small>SKU {{ item.variant.sku }}</small>
-                            <strong>{{ formatMoney(item.variant.price) }}</strong>
+                            <strong>{{
+                                formatMoney(item.variant.price)
+                            }}</strong>
                         </div>
 
                         <div class="quantity-control">
@@ -70,7 +74,7 @@ function checkout() {
                                 type="button"
                                 aria-label="Decrease quantity"
                                 @click="
-                                    updateQuantity(item.key, item.quantity - 1)
+                                    updateQuantity(item.id, item.quantity - 1)
                                 "
                             >
                                 <Minus />
@@ -80,7 +84,7 @@ function checkout() {
                                 type="button"
                                 aria-label="Increase quantity"
                                 @click="
-                                    updateQuantity(item.key, item.quantity + 1)
+                                    updateQuantity(item.id, item.quantity + 1)
                                 "
                             >
                                 <Plus />
@@ -88,14 +92,14 @@ function checkout() {
                         </div>
 
                         <strong class="line-total">
-                            {{ formatMoney(item.variant.price * item.quantity) }}
+                            {{ formatMoney(item.line_total) }}
                         </strong>
 
                         <button
                             type="button"
                             class="remove-button"
                             :aria-label="`Remove ${item.product.name}`"
-                            @click="removeItem(item.key)"
+                            @click="removeItem(item.id)"
                         >
                             <Trash2 />
                         </button>
@@ -106,16 +110,16 @@ function checkout() {
                     <p>Order Summary</p>
                     <div>
                         <span>Subtotal</span>
-                        <strong>{{ formatMoney(subtotal) }}</strong>
+                        <strong>{{ formatMoney(cart.subtotal) }}</strong>
                     </div>
                     <small>
-                        Shipping and final availability will be confirmed by our
-                        team on WhatsApp.
+                        Shipping and payment will be confirmed in the secure
+                        checkout flow.
                     </small>
-                    <button type="button" @click="checkout">
-                        Checkout via WhatsApp
-                    </button>
-                    <Link href="/shop">Continue Shopping</Link>
+                    <Link :href="checkout.url()" class="checkout-link">
+                        Checkout
+                    </Link>
+                    <Link :href="shop.url()">Continue Shopping</Link>
                 </aside>
             </div>
 
@@ -123,10 +127,10 @@ function checkout() {
                 <ShoppingBag />
                 <h2>Your cart is empty.</h2>
                 <p>
-                    Add your favorite soft essentials first, then checkout by
-                    WhatsApp.
+                    Add your favorite soft essentials first, then continue to
+                    checkout.
                 </p>
-                <Link href="/shop">Shop Now</Link>
+                <Link :href="shop.url()">Shop Now</Link>
             </section>
         </section>
     </StorefrontLayout>
@@ -153,7 +157,7 @@ function checkout() {
 
 .cart-heading p,
 .summary-card p {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -162,8 +166,8 @@ function checkout() {
 
 .cart-heading h1,
 .empty-cart h2 {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-weight: 400;
 }
 
@@ -177,7 +181,7 @@ function checkout() {
 .summary-card small,
 .item-copy span,
 .item-copy small {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 13px;
     line-height: 1.75;
 }
@@ -203,15 +207,15 @@ function checkout() {
     grid-template-columns: 112px minmax(0, 1fr) auto auto 42px;
     gap: 18px;
     align-items: center;
-    border: 1px solid #e5ded6;
-    background: #fffdf8;
+    border: 1px solid var(--lette-line);
+    background: var(--lette-surface);
     padding: 14px;
 }
 
 .item-image {
     aspect-ratio: 1;
     overflow: hidden;
-    background: #f0eee8;
+    background: var(--lette-placeholder);
 }
 
 .item-image img {
@@ -227,15 +231,15 @@ function checkout() {
 
 .item-copy a {
     width: fit-content;
-    color: #4e453f;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-text);
+    font-family: var(--lette-heading-font);
     font-size: 18px;
 }
 
 .item-copy strong,
 .line-total,
 .summary-card strong {
-    color: #1c1c18;
+    color: var(--lette-ink);
     font-weight: 600;
 }
 
@@ -247,8 +251,8 @@ function checkout() {
     display: grid;
     grid-template-columns: 36px 42px 36px;
     min-height: 38px;
-    border: 1px solid #d1c4bc;
-    background: #fcf9f3;
+    border: 1px solid var(--lette-border);
+    background: var(--lette-canvas);
 }
 
 .quantity-control button,
@@ -256,11 +260,11 @@ function checkout() {
 .remove-button {
     display: grid;
     place-items: center;
-    color: #4e453f;
+    color: var(--lette-text);
 }
 
 .quantity-control span {
-    border-inline: 1px solid #e5ded6;
+    border-inline: 1px solid var(--lette-line);
     font-size: 13px;
     font-weight: 700;
 }
@@ -282,8 +286,8 @@ function checkout() {
 .remove-button {
     width: 42px;
     height: 42px;
-    border: 1px solid #e5ded6;
-    background: #fcf9f3;
+    border: 1px solid var(--lette-line);
+    background: var(--lette-canvas);
 }
 
 .summary-card {
@@ -291,8 +295,8 @@ function checkout() {
     top: 128px;
     display: grid;
     gap: 18px;
-    border: 1px solid #d1c4bc;
-    background: #f6f3ed;
+    border: 1px solid var(--lette-border);
+    background: var(--lette-sand);
     padding: 24px;
 }
 
@@ -300,10 +304,10 @@ function checkout() {
     display: flex;
     justify-content: space-between;
     gap: 16px;
-    border-top: 1px solid #e5ded6;
-    border-bottom: 1px solid #e5ded6;
+    border-top: 1px solid var(--lette-line);
+    border-bottom: 1px solid var(--lette-line);
     padding: 16px 0;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 14px;
 }
 
@@ -311,41 +315,46 @@ function checkout() {
 .summary-card a,
 .empty-cart a {
     display: inline-flex;
-    min-height: 48px;
+    min-height: var(--lette-cta-height);
     align-items: center;
     justify-content: center;
-    border: 1px solid #6c5b4e;
-    padding: 0 18px;
-    font-size: 11px;
+    border: 1px solid var(--lette-brand);
+    padding: 0 var(--lette-cta-padding);
+    font-size: var(--lette-cta-size);
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--lette-cta-tracking);
     text-transform: uppercase;
 }
 
 .summary-card button,
+.summary-card a.checkout-link,
 .empty-cart a {
-    background: #6c5b4e;
-    color: #fffdf8;
+    background: var(--lette-brand);
+    color: var(--lette-surface);
 }
 
 .summary-card a {
-    background: #fffdf8;
-    color: #4e453f;
+    background: var(--lette-surface);
+    color: var(--lette-text);
+}
+
+.summary-card a.checkout-link {
+    color: var(--lette-surface);
 }
 
 .empty-cart {
     gap: 14px;
     max-width: 440px;
     margin: 0 auto;
-    border: 1px solid #e5ded6;
-    background: #fffdf8;
+    border: 1px solid var(--lette-line);
+    background: var(--lette-surface);
     padding: 54px 24px;
 }
 
 .empty-cart svg {
     width: 32px;
     height: 32px;
-    color: #6c5b4e;
+    color: var(--lette-brand);
 }
 
 .empty-cart h2 {

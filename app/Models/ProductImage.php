@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['product_id', 'disk', 'path', 'google_drive_file_id', 'alt_text', 'sort_order', 'is_primary'])]
 class ProductImage extends Model
 {
     use HasFactory;
+
+    /**
+     * @var list<string>
+     */
+    protected $fillable = ['product_id', 'disk', 'path', 'google_drive_file_id', 'alt_text', 'sort_order', 'is_primary'];
 
     /**
      * @return BelongsTo<Product, $this>

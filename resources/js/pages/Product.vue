@@ -13,6 +13,8 @@ import ProductCard from '@/components/lette/ProductCard.vue';
 import type { ProductCardProduct } from '@/components/lette/ProductCard.vue';
 import StorefrontLayout from '@/components/lette/StorefrontLayout.vue';
 import { useCart } from '@/composables/useCart';
+import { careGuide, cart, shop, sizeGuide } from '@/routes';
+import { category as shopCategory } from '@/routes/shop';
 
 type ProductImage = {
     id: number;
@@ -95,7 +97,10 @@ const canAddToCart = computed(
 );
 
 function changeQuantity(nextQuantity: number) {
-    quantity.value = Math.min(Math.max(1, nextQuantity), maxQuantity.value || 1);
+    quantity.value = Math.min(
+        Math.max(1, nextQuantity),
+        maxQuantity.value || 1,
+    );
 }
 
 function selectVariant(variant: ProductVariant) {
@@ -109,24 +114,7 @@ function addToCart() {
         return;
     }
 
-    addItem(
-        {
-            id: props.product.id,
-            name: props.product.name,
-            slug: props.product.slug,
-            image: currentImage.value,
-        },
-        {
-            id: selectedVariant.value.id,
-            sku: selectedVariant.value.sku,
-            size: selectedVariant.value.size,
-            color: selectedVariant.value.color,
-            price: selectedVariant.value.price,
-            stock: selectedVariant.value.stock,
-        },
-        quantity.value,
-    );
-
+    addItem(selectedVariant.value.id, quantity.value);
     justAdded.value = true;
 }
 
@@ -145,9 +133,9 @@ function money(value: number) {
 
         <section class="product-shell">
             <nav class="breadcrumb" aria-label="Breadcrumb">
-                <Link href="/shop">Shop</Link>
+                <Link :href="shop.url()">Shop</Link>
                 <span>/</span>
-                <Link :href="`/shop?category=${product.category.slug}`">{{
+                <Link :href="shopCategory.url(product.category.slug)">{{
                     product.category.name
                 }}</Link>
             </nav>
@@ -155,7 +143,12 @@ function money(value: number) {
             <div class="product-layout">
                 <div class="media-column">
                     <div class="main-image">
-                        <img :src="currentImage" :alt="product.name" />
+                        <img
+                            :src="currentImage"
+                            :alt="product.name"
+                            width="600"
+                            height="600"
+                        />
                     </div>
                     <div
                         v-if="product.images.length > 1"
@@ -169,7 +162,12 @@ function money(value: number) {
                             :class="{ active: currentImage === image.path }"
                             @click="currentImage = image.path"
                         >
-                            <img :src="image.path" :alt="image.alt_text" />
+                            <img
+                                :src="image.path"
+                                :alt="image.alt_text"
+                                width="600"
+                                height="600"
+                            />
                         </button>
                     </div>
                 </div>
@@ -249,11 +247,12 @@ function money(value: number) {
                             >
                                 <ShoppingBag /> Add to Cart
                             </button>
-                            <Link href="/cart">View Cart</Link>
+                            <Link :href="cart.url()">View Cart</Link>
                         </div>
 
                         <p v-if="justAdded" class="cart-notice">
-                            Added to cart. You can continue shopping or checkout by WhatsApp.
+                            Added to cart. You can continue shopping or continue
+                            to checkout.
                         </p>
                     </div>
 
@@ -281,6 +280,7 @@ function money(value: number) {
                 <Check />
                 <h2>Care</h2>
                 <p>{{ product.care_instructions }}</p>
+                <Link :href="careGuide.url()">Full care guide</Link>
             </article>
             <article>
                 <Ruler />
@@ -289,6 +289,7 @@ function money(value: number) {
                     Choose by baby's current height and weight. If between
                     sizes, pick the larger size for longer wear.
                 </p>
+                <Link :href="sizeGuide.url()">View size chart</Link>
             </article>
         </section>
 
@@ -324,7 +325,7 @@ function money(value: number) {
     display: flex;
     gap: 9px;
     margin-bottom: 24px;
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -332,7 +333,7 @@ function money(value: number) {
 }
 
 .breadcrumb a:hover {
-    color: #1c1c18;
+    color: var(--lette-ink);
 }
 
 .product-layout {
@@ -347,7 +348,7 @@ function money(value: number) {
     aspect-ratio: 1;
     max-height: min(68vh, 680px);
     overflow: hidden;
-    background: #f0eee8;
+    background: var(--lette-placeholder);
 }
 
 .main-image img,
@@ -368,11 +369,11 @@ function money(value: number) {
     aspect-ratio: 1;
     overflow: hidden;
     border: 1px solid transparent;
-    background: #f0eee8;
+    background: var(--lette-placeholder);
 }
 
 .thumbnail-row button.active {
-    border-color: #6c5b4e;
+    border-color: var(--lette-brand);
 }
 
 .product-copy {
@@ -384,7 +385,7 @@ function money(value: number) {
 
 .eyebrow,
 .section-heading p {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -392,22 +393,22 @@ function money(value: number) {
 }
 
 .product-copy h1 {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-size: clamp(38px, 4vw, 58px);
     font-weight: 400;
     line-height: 1.1;
 }
 
 .product-copy > strong {
-    color: #1c1c18;
+    color: var(--lette-ink);
     font-size: 20px;
     font-weight: 600;
 }
 
 .description {
     max-width: 560px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 15px;
     line-height: 1.85;
 }
@@ -415,7 +416,7 @@ function money(value: number) {
 .variant-panel {
     display: grid;
     gap: 14px;
-    border-top: 1px solid #e5ded6;
+    border-top: 1px solid var(--lette-line);
     padding-top: 20px;
 }
 
@@ -423,7 +424,7 @@ function money(value: number) {
     display: flex;
     justify-content: space-between;
     gap: 18px;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -431,7 +432,7 @@ function money(value: number) {
 }
 
 .option-heading em {
-    color: #80756e;
+    color: var(--lette-muted);
     font-style: normal;
 }
 
@@ -449,16 +450,16 @@ function money(value: number) {
     width: 112px;
     min-height: 86px;
     box-sizing: border-box;
-    border: 1px solid #d1c4bc;
-    background: #fffdf8;
+    border: 1px solid var(--lette-border);
+    background: var(--lette-surface);
     padding: 13px;
-    color: #4e453f;
+    color: var(--lette-text);
     text-align: left;
 }
 
 .variant-grid button.selected {
-    border-color: #6c5b4e;
-    box-shadow: inset 0 0 0 1px #6c5b4e;
+    border-color: var(--lette-brand);
+    box-shadow: inset 0 0 0 1px var(--lette-brand);
 }
 
 .variant-grid button:disabled {
@@ -486,7 +487,7 @@ function money(value: number) {
 }
 
 .variant-grid small {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 11px;
 }
 
@@ -500,8 +501,8 @@ function money(value: number) {
     grid-template-columns: 48px 60px 48px;
     width: 156px;
     height: 48px;
-    border: 1px solid #d1c4bc;
-    background: #fffdf8;
+    border: 1px solid var(--lette-border);
+    background: var(--lette-surface);
 }
 
 .quantity-control button,
@@ -509,13 +510,13 @@ function money(value: number) {
     display: grid;
     min-width: 0;
     place-items: center;
-    color: #4e453f;
+    color: var(--lette-text);
     font-size: 14px;
     font-weight: 700;
 }
 
 .quantity-control span {
-    border-inline: 1px solid #e5ded6;
+    border-inline: 1px solid var(--lette-line);
 }
 
 .action-row {
@@ -527,22 +528,22 @@ function money(value: number) {
 .action-row button,
 .action-row a {
     display: inline-flex;
-    min-height: 48px;
+    min-height: var(--lette-cta-height);
     align-items: center;
     justify-content: center;
-    border: 1px solid #6c5b4e;
-    padding: 0 18px;
-    font-size: 11px;
+    border: 1px solid var(--lette-brand);
+    padding: 0 var(--lette-cta-padding);
+    font-size: var(--lette-cta-size);
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--lette-cta-tracking);
     text-transform: uppercase;
 }
 
 .action-row button {
     min-width: 164px;
     gap: 8px;
-    background: #6c5b4e;
-    color: #fffdf8;
+    background: var(--lette-brand);
+    color: var(--lette-surface);
 }
 
 .action-row button svg {
@@ -552,7 +553,7 @@ function money(value: number) {
 }
 
 .cart-notice {
-    color: #5d6c4e;
+    color: var(--lette-success);
     font-size: 12px;
     font-weight: 600;
     line-height: 1.6;
@@ -565,8 +566,8 @@ function money(value: number) {
 
 .action-row a {
     min-width: 150px;
-    background: #fffdf8;
-    color: #4e453f;
+    background: var(--lette-surface);
+    color: var(--lette-text);
 }
 
 .trust-grid,
@@ -581,9 +582,9 @@ function money(value: number) {
 
 .trust-grid article,
 .detail-info article {
-    border: 1px solid #e5ded6;
-    background: #f6f3ed;
-    color: #4e453f;
+    border: 1px solid var(--lette-line);
+    background: var(--lette-sand);
+    color: var(--lette-text);
 }
 
 .trust-grid article {
@@ -600,7 +601,7 @@ function money(value: number) {
 .detail-info svg {
     width: 18px;
     height: 18px;
-    color: #6c5b4e;
+    color: var(--lette-brand);
     stroke-width: 1.45;
 }
 
@@ -618,8 +619,8 @@ function money(value: number) {
 
 .detail-info h2,
 .section-heading h2 {
-    color: #6c5b4e;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-brand);
+    font-family: var(--lette-heading-font);
     font-weight: 400;
 }
 
@@ -627,10 +628,17 @@ function money(value: number) {
     font-size: 22px;
 }
 
-.detail-info p {
-    color: #4e453f;
+.detail-info p,
+.detail-info a {
+    color: var(--lette-text);
     font-size: 13px;
     line-height: 1.75;
+}
+
+.detail-info a {
+    width: fit-content;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .related-section {

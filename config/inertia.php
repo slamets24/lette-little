@@ -16,9 +16,25 @@ return [
     */
 
     'ssr' => [
-        'enabled' => true,
-        'url' => 'http://127.0.0.1:13714',
-        // 'bundle' => base_path('bootstrap/ssr/ssr.mjs'),
+
+        /*
+         * SSR is on everywhere except the test suite, so feature tests never
+         * depend on a running Node process. Tests that exercise SSR enable it
+         * explicitly and fake the render endpoint.
+         */
+        'enabled' => (bool) env('INERTIA_SSR_ENABLED', env('APP_ENV') !== 'testing'),
+
+        'runtime' => env('INERTIA_SSR_RUNTIME', 'node'),
+
+        'ensure_runtime_exists' => (bool) env('INERTIA_SSR_ENSURE_RUNTIME_EXISTS', false),
+
+        'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:13714'),
+
+        'ensure_bundle_exists' => (bool) env('INERTIA_SSR_ENSURE_BUNDLE_EXISTS', true),
+
+        // 'bundle' => base_path('bootstrap/ssr/app.js'),
+
+        'throw_on_error' => (bool) env('INERTIA_SSR_THROW_ON_ERROR', false),
 
     ],
 

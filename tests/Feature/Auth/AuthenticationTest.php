@@ -19,9 +19,22 @@ class AuthenticationTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_users_can_authenticate_using_the_login_screen()
+    public function test_customer_users_are_redirected_to_orders_after_login()
     {
         $user = User::factory()->create();
+
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect(route('orders.index', absolute: false));
+    }
+
+    public function test_admin_users_are_redirected_to_dashboard_after_login()
+    {
+        $user = User::factory()->admin()->create();
 
         $response = $this->post(route('login.store'), [
             'email' => $user->email,

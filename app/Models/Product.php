@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,10 +9,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['category_id', 'name', 'slug', 'description', 'materials', 'care_instructions', 'base_price', 'is_active', 'is_featured'])]
 class Product extends Model
 {
     use HasFactory;
+
+    /**
+     * @var list<string>
+     */
+    protected $fillable = ['category_id', 'name', 'slug', 'description', 'materials', 'care_instructions', 'base_price', 'is_active', 'is_featured'];
 
     /**
      * Use product slugs in storefront URLs.

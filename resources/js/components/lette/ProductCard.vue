@@ -52,7 +52,13 @@ const sizeLabel = computed(
             :href="product.href ?? '/shop'"
             :aria-label="`View ${product.name}`"
         >
-            <img :src="product.image" :alt="product.name" loading="lazy" />
+            <img
+                :src="product.image"
+                :alt="product.name"
+                width="600"
+                height="600"
+                loading="lazy"
+            />
         </Link>
         <div class="product-meta">
             <span v-if="categoryLabel" class="product-category">{{
@@ -91,7 +97,7 @@ const sizeLabel = computed(
     display: block;
     aspect-ratio: 1;
     overflow: hidden;
-    background: #f0eee8;
+    background: var(--lette-placeholder);
 }
 
 .product-image img {
@@ -116,7 +122,7 @@ const sizeLabel = computed(
 }
 
 .product-category {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.14em;
@@ -124,28 +130,28 @@ const sizeLabel = computed(
 }
 
 h3 {
-    color: #4e453f;
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    color: var(--lette-text);
+    font-family: var(--lette-heading-font);
     font-size: 13px;
     font-weight: 400;
     line-height: 1.35;
 }
 
 p {
-    color: #1c1c18;
+    color: var(--lette-ink);
     font-size: 11px;
     font-weight: 500;
 }
 
 small {
-    color: #80756e;
+    color: var(--lette-muted);
     font-size: 10px;
     line-height: 1.4;
 }
 
 strong {
     margin-top: 3px;
-    color: #5d6c4e;
+    color: var(--lette-success);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -153,7 +159,7 @@ strong {
 }
 
 strong.low {
-    color: #9a6a35;
+    color: var(--lette-warning);
 }
 
 .swatch-row {
