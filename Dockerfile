@@ -10,6 +10,9 @@ RUN npm run build
 # Stage 2: Production PHP runtime with FrankenPHP
 FROM dunglas/frankenphp:1-php8.4-bookworm
 
+ENV SERVER_NAME="http://"
+ENV PORT=80
+
 # Install required PHP extensions
 RUN install-php-extensions \
     pdo_pgsql \
@@ -43,8 +46,8 @@ RUN mkdir -p storage/framework/sessions \
              bootstrap/cache \
     && chmod -R 777 storage bootstrap/cache
 
-# Copy custom Caddyfile
+# Copy custom Caddyfile to both standard paths
+COPY Caddyfile /etc/frankenphp/Caddyfile
 COPY Caddyfile /etc/caddy/Caddyfile
 
-ENV PORT=80
 EXPOSE 80
