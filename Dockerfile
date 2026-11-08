@@ -42,9 +42,14 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN mkdir -p storage/framework/sessions \
              storage/framework/views \
              storage/framework/cache \
+             storage/framework/cache/data \
+             storage/app/public \
              storage/logs \
              bootstrap/cache \
-    && chmod -R 777 storage bootstrap/cache
+             /tmp/storage/framework/views \
+             /tmp/storage/framework/sessions \
+             /tmp/storage/framework/cache \
+    && chmod -R 777 storage bootstrap/cache /tmp/storage
 
 # Copy custom Caddyfile to both standard paths
 COPY Caddyfile /etc/frankenphp/Caddyfile
